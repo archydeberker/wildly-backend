@@ -1,7 +1,46 @@
-from flask import Flask, jsonify, request
 import json
 
+from flask import Flask, jsonify
+from flask_cors import cross_origin
+import os
+
+from auth import requires_auth, requires_scope, AuthError
+
+from models import db
+
+
 app = Flask(__name__)
+db.init_app(app)
+
+
+@app.route("/api/public")
+
+@app.route("/api/public")
+@cross_origin(headers=["Content-Type", "Authorization"])
+def public():
+    response = "Hello from a public endpoint! You don't need to be authenticated to see this."
+    return jsonify(message=response)
+
+
+@app.route("/api/private")
+@cross_origin(headers=["Content-Type", "Authorization"])
+@requires_auth
+def private():
+    response = "Hello from a private endpoint! You need to be authenticated to see this."
+    return jsonify(message=response)
+
+
+@app.route("/api/private-scoped")
+@cross_origin(headers=["Content-Type", "Authorization"])
+@requires_auth
+def private_scoped():
+    if requires_scope("read:messages"):
+        response = "Hello from a private endpoint! You need to be authenticated and have a scope of read:messages to see this."
+        return jsonify(message=response)
+    raise AuthError({
+        "code": "Unauthorized",
+        "description": "You don't have access to this resource"
+    }, 403)
 
 
 @app.route("/ping")
@@ -16,8 +55,14 @@ def after_request(response):
     return response
 
 
+@app.errorhandler(AuthError)
+def handle_auth_error(ex):
+    response = jsonify(ex.error)
+    response.status_code = ex.status_code
+    return response
+
+
 if __name__ == "__main__":
     app.run(
         debug=True, host="127.0.0.1", port=5000
     )  # run app in debug mode on port 5000
-
