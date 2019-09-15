@@ -2,18 +2,16 @@ import json
 
 from flask import Flask, jsonify
 from flask_cors import cross_origin
-import os
+
+from flask_sqlalchemy import SQLAlchemy
 
 from auth import requires_auth, requires_scope, AuthError
 
-from models import db
-
-
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+
+db = SQLAlchemy(app)
 db.init_app(app)
-
-
-@app.route("/api/public")
 
 @app.route("/api/public")
 @cross_origin(headers=["Content-Type", "Authorization"])
