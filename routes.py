@@ -43,7 +43,7 @@ def add_location():
 def list_locations():
     locations = models.Location.query.all()
 
-    return '\n'.join([l.name for l in locations])
+    return '\n'.join([f'{l.id}: {l.name}' for l in locations])
 
 
 @api.route("/api/private-scoped")
