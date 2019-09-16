@@ -1,4 +1,6 @@
-from app import db
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
 
 # For an explanation of the models and relationships defined here, see
 # https://flask-sqlalchemy.palletsprojects.com/en/2.x/models/
