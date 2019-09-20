@@ -28,10 +28,12 @@ def private():
 
 @api.route("/api/add-location", methods=['POST'])
 @cross_origin(headers=["Content-Type", "Authorization"])
-@requires_auth
+# @requires_auth
 def add_location():
     loc = request.json
+    activities = loc.pop('activities')
     new_location = models.Location(**loc)
+
     models.db.session.add(new_location)
     models.db.session.commit()
     return jsonify(request.json)

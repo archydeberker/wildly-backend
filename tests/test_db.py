@@ -1,10 +1,13 @@
 import datetime
 from sqlalchemy.exc import IntegrityError
 
-from app import db, app
+from app import db, create_app
 import os
 import models
 import pytest
+
+app = create_app()
+app.app_context().push()
 
 
 @pytest.fixture(scope="session")

@@ -13,7 +13,7 @@ trips = db.Table("trips",
 activities = db.Table(
     "tags",
     db.Column(
-        "activity_id", db.Integer, db.ForeignKey("activity.id"), primary_key=True
+        "activity_name", db.String(1000), db.ForeignKey("activity.name"), primary_key=True
     ),
     db.Column(
         "location_id", db.Integer, db.ForeignKey("location.id"), primary_key=True
@@ -24,7 +24,7 @@ user_interests = db.Table(
     "user_interests",
     db.Column("user_id", db.Integer, db.ForeignKey("user.id"), primary_key=True),
     db.Column(
-        "activity_id", db.Integer, db.ForeignKey("activity.id"), primary_key=True
+        "activity_name", db.String(1000), db.ForeignKey("activity.name"), primary_key=True
     ),
 )
 
@@ -57,7 +57,7 @@ class User(db.Model):
 
 class Trip(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    activity = db.Column("activity_id", db.Integer, db.ForeignKey("activity.id"))
+    activity = db.Column("activity_name", db.String(1000), db.ForeignKey("activity.name"))
     location = db.Column("location_id", db.Integer, db.ForeignKey("location.id"))
     timestamp = db.Column("timestamp", db.DateTime)
 
@@ -81,8 +81,7 @@ class Location(db.Model):
 
 
 class Activity(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(1000), nullable=False)
+    name = db.Column(db.String(1000), nullable=False, primary_key=True)
 
     def __repr__(self):
         return f'<Activity {self.name}>'
