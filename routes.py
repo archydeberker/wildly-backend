@@ -5,6 +5,7 @@ from flask import Blueprint
 from flask_cors import cross_origin
 
 from auth import requires_auth, requires_scope, AuthError
+from db_utils import add_or_return_activity
 
 import models
 
@@ -34,6 +35,9 @@ def add_location():
     activities = loc.pop('activities')
     new_location = models.Location(**loc)
 
+    location_activities = [add_or_return_activity(act['value']) for act in activities]
+    new_location.activities = location_activities
+
     models.db.session.add(new_location)
     models.db.session.commit()
     return jsonify(request.json)
@@ -41,11 +45,20 @@ def add_location():
 
 @api.route("/api/locations")
 @cross_origin(headers=["Content-Type", "Authorization"])
-@requires_auth
+# @requires_auth
 def list_locations():
     locations = models.Location.query.all()
 
     return '\n'.join([f'{l.id}: {l.name}' for l in locations])
+
+
+@api.route("/api/activities")
+@cross_origin(headers=["Content-Type", "Authorization"])
+# @requires_auth
+def list_activities():
+    locations = models.Activity.query.all()
+
+    return '\n'.join([f'{l.name}' for l in locations])
 
 
 @api.route("/api/private-scoped")
