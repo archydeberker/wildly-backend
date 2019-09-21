@@ -3,6 +3,7 @@ from functools import wraps
 
 import os
 from urllib.request import urlopen
+import requests
 
 from flask import request, _request_ctx_stack
 from jose import jwt
@@ -11,6 +12,11 @@ AUTH0_DOMAIN = os.getenv('AUTH0_DOMAIN')
 API_AUDIENCE = os.getenv('API_AUDIENCE')
 
 ALGORITHMS = ["RS256"]
+
+
+def retrieve_user_info(token):
+    response = requests.get(f'https://{AUTH0_DOMAIN}/userinfo', params={'access_token': token})
+    return response.json()
 
 
 class AuthError(Exception):
@@ -54,11 +60,11 @@ def requires_auth(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         token = get_token_auth_header()
+        retrieve_user_info(token)
 
         jsonurl = urlopen("https://"+AUTH0_DOMAIN+"/.well-known/jwks.json")
         jwks = json.loads(jsonurl.read())
 
-        print(token)
         unverified_header = jwt.get_unverified_header(token)
 
         rsa_key = {}
@@ -95,6 +101,7 @@ def requires_auth(f):
                                     " token."}, 401)
 
             _request_ctx_stack.top.current_user = payload
+            print(payload)
             return f(*args, **kwargs)
         raise AuthError({"code": "invalid_header",
                         "description": "Unable to find appropriate key"}, 401)

@@ -4,11 +4,10 @@ from flask import jsonify, request
 from flask import Blueprint
 from flask_cors import cross_origin
 
-from auth import requires_auth, requires_scope, AuthError
-from db_utils import add_or_return_activity
+from auth import requires_auth, requires_scope, AuthError, get_token_auth_header, retrieve_user_info
 
 import models
-
+import actions
 api = Blueprint('api', __name__)
 
 
@@ -23,24 +22,39 @@ def public():
 @cross_origin(headers=["Content-Type", "Authorization"])
 @requires_auth
 def private():
-    response = "Hello from a private endpoint! You need to be authenticated to see this."
+    token = get_token_auth_header()
+    user = retrieve_user_info(token)
+    response = f"Hello {user['given_name']}, this is a private endpoint! You need to be authenticated to see this."
+
     return jsonify(message=response)
 
 
 @api.route("/api/add-location", methods=['POST'])
 @cross_origin(headers=["Content-Type", "Authorization"])
-# @requires_auth
+@requires_auth
 def add_location():
-    loc = request.json
-    activities = loc.pop('activities')
-    new_location = models.Location(**loc)
+    location = request.json
+    actions.add_new_location(location)
+    token = get_token_auth_header()
+    user = retrieve_user_info(token)
+    actions.add_location_to_user(location, user)
 
-    location_activities = [add_or_return_activity(act['value']) for act in activities]
-    new_location.activities = location_activities
+    print(user)
+    return jsonify(location)
 
-    models.db.session.add(new_location)
-    models.db.session.commit()
-    return jsonify(request.json)
+
+@api.route("/api/add-user", methods=['POST'])
+@cross_origin(headers=["Content-Type", "Authorization"])
+# @requires_auth
+def add_user():
+    user = request.json
+    token = get_token_auth_header()
+    user = retrieve_user_info(token)
+    actions.add_or_return_user(user)
+    # actions.add_location_to_user(location, user)
+
+    print(user)
+    return jsonify(user)
 
 
 @api.route("/api/locations")
@@ -50,6 +64,15 @@ def list_locations():
     locations = models.Location.query.all()
 
     return '\n'.join([f'{l.id}: {l.name}' for l in locations])
+
+
+@api.route("/api/users")
+@cross_origin(headers=["Content-Type", "Authorization"])
+# @requires_auth
+def list_users():
+    users = models.User.query.all()
+
+    return '\n'.join([f'{u.name}: {u.email}' for u in users])
 
 
 @api.route("/api/activities")
