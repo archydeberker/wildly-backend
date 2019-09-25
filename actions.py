@@ -1,25 +1,33 @@
 import models
 
 
-def add_new_location(location):
+def commit_new_location(location, user_row):
+    """
+    Handles the adding of new locations to the database, and the association of the relevant
+    user and activity details.
+
+    location_request: json object from POST reqeust
+    user_row: database row corresponding to that user
+
+    """
+
     activities = location.pop('activities')
     new_location = models.Location(**location)
 
     new_location.activities = [add_or_return_activity(act['value']) for act in activities]
+    new_location.users.append(user_row)
 
     models.db.session.add(new_location)
     models.db.session.commit()
 
-    return new_location
-
 
 def add_or_return_activity(activity):
+
     activity_row = models.Activity.query.filter_by(name=activity).first()
     if activity_row is None:
         activity_row = models.Activity(name=activity)
 
         models.db.session.add(activity_row)
-        models.db.session.commit()
 
     return activity_row
 
@@ -40,13 +48,3 @@ def add_or_return_user(user):
         models.db.session.commit()
 
     return user_row
-
-
-def add_location_to_user(location, user):
-    """Associate a user and a location"""
-
-    location.users.append(user)
-
-    models.db.session.add(location)
-    models.db.session.commit()
-

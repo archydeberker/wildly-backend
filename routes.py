@@ -33,16 +33,16 @@ def private():
 @cross_origin(headers=["Content-Type", "Authorization"])
 @requires_auth
 def add_location():
-    location_dict = request.json
-    location = actions.add_new_location(location_dict)
+    location_request = request.json
 
     token = get_token_auth_header()
     user_info = retrieve_user_info(token)
 
     user = actions.add_or_return_user(user_info)
-    user = actions.add_location_to_user(location, user)
 
-    return jsonify(location_dict)
+    actions.commit_new_location(location_request, user)
+
+    return jsonify(location_request)
 
 
 @api.route("/api/add-user", methods=['POST'])
@@ -63,7 +63,7 @@ def add_user():
 def list_locations():
     locations = models.Location.query.all()
 
-    return '\n'.join([f'{l.id}: {l.name}' for l in locations])
+    return '\n'.join([f'{l.id}: {l.name}, {l.users}' for l in locations])
 
 
 @api.route("/api/users")
