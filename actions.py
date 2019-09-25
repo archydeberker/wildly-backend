@@ -8,10 +8,9 @@ def add_new_location(location):
     new_location.activities = [add_or_return_activity(act['value']) for act in activities]
 
     models.db.session.add(new_location)
-
-    # Associate the new location to the currently logged in user
-
     models.db.session.commit()
+
+    return new_location
 
 
 def add_or_return_activity(activity):
@@ -25,6 +24,12 @@ def add_or_return_activity(activity):
     return activity_row
 
 
+def get_location(location):
+    return models.Location.query.filter_by(latitude=location['latitude'],
+                                           longitude=location['longitude'],
+                                           ).first()
+
+
 def add_or_return_user(user):
     user_row = models.User.query.filter_by(email=user['email']).first()
     if user_row is None:
@@ -35,3 +40,13 @@ def add_or_return_user(user):
         models.db.session.commit()
 
     return user_row
+
+
+def add_location_to_user(location, user):
+    """Associate a user and a location"""
+
+    location.users.append(user)
+
+    models.db.session.add(location)
+    models.db.session.commit()
+

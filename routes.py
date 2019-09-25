@@ -33,25 +33,25 @@ def private():
 @cross_origin(headers=["Content-Type", "Authorization"])
 @requires_auth
 def add_location():
-    location = request.json
-    actions.add_new_location(location)
-    token = get_token_auth_header()
-    user = retrieve_user_info(token)
-    actions.add_location_to_user(location, user)
+    location_dict = request.json
+    location = actions.add_new_location(location_dict)
 
-    print(user)
-    return jsonify(location)
+    token = get_token_auth_header()
+    user_info = retrieve_user_info(token)
+
+    user = actions.add_or_return_user(user_info)
+    user = actions.add_location_to_user(location, user)
+
+    return jsonify(location_dict)
 
 
 @api.route("/api/add-user", methods=['POST'])
 @cross_origin(headers=["Content-Type", "Authorization"])
-# @requires_auth
+@requires_auth
 def add_user():
-    user = request.json
     token = get_token_auth_header()
     user = retrieve_user_info(token)
     actions.add_or_return_user(user)
-    # actions.add_location_to_user(location, user)
 
     print(user)
     return jsonify(user)
