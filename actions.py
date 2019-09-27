@@ -48,3 +48,8 @@ def add_or_return_user(user):
         models.db.session.commit()
 
     return user_row
+
+
+def get_locations_for_user(user):
+    user_row = models.User.query.filter_by(email=user['email']).first()
+    return user_row.locations

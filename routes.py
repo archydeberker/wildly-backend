@@ -66,6 +66,18 @@ def list_locations():
     return '\n'.join([f'{l.id}: {l.name}, {l.users}' for l in locations])
 
 
+@api.route("/api/user-locations")
+@cross_origin(headers=["Content-Type", "Authorization"])
+@requires_auth
+def list_locations_for_current_user():
+    token = get_token_auth_header()
+    user = retrieve_user_info(token)
+
+    locations = actions.get_locations_for_user(user)
+    print(locations)
+    return jsonify([l.name for l in locations])
+
+
 @api.route("/api/users")
 @cross_origin(headers=["Content-Type", "Authorization"])
 # @requires_auth
@@ -81,7 +93,7 @@ def list_users():
 def list_activities():
     locations = models.Activity.query.all()
 
-    return '\n'.join([f'{l.name}' for l in locations])
+    return jsonify([f'{l.name}' for l in locations])
 
 
 @api.route("/api/private-scoped")
