@@ -55,6 +55,13 @@ class User(db.Model):
         return f'<User {self.email}>'
 
 
+class Token(db.Model):
+    """Use this to store the mapping between JWT and user so we don't have to repeatedly call auth0"""
+    token = db.Column(db.String(1000), primary_key=True)
+    email = db.Column(db.String(100), db.ForeignKey("user.email"), nullable=False)
+    name = db.Column(db.String(100), db.ForeignKey("user.name"))
+
+
 class Trip(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     activity = db.Column("activity_name", db.String(1000), db.ForeignKey("activity.name"))

@@ -5,9 +5,9 @@ from flask import Blueprint
 from flask_cors import cross_origin
 
 from auth import requires_auth, requires_scope, AuthError, get_token_auth_header, retrieve_user_info
-
 import models
 import actions
+
 api = Blueprint('api', __name__)
 
 
@@ -33,11 +33,8 @@ def private():
 @cross_origin(headers=["Content-Type", "Authorization"])
 @requires_auth
 def add_location():
-    location_request = request.json
-
-    token = get_token_auth_header()
-    user_info = retrieve_user_info(token)
-
+    location_request = request.json.pop('location')
+    user_info = request.json.pop('user')
     user = actions.add_or_return_user(user_info)
 
     actions.commit_new_location(location_request, user)
@@ -53,7 +50,6 @@ def add_user():
     user = retrieve_user_info(token)
     actions.add_or_return_user(user)
 
-    print(user)
     return jsonify(user)
 
 
@@ -66,16 +62,18 @@ def list_locations():
     return '\n'.join([f'{l.id}: {l.name}, {l.users}' for l in locations])
 
 
-@api.route("/api/user-locations")
+@api.route("/api/user-locations",  methods=['POST'])
 @cross_origin(headers=["Content-Type", "Authorization"])
 @requires_auth
 def list_locations_for_current_user():
-    token = get_token_auth_header()
-    user = retrieve_user_info(token)
-
+    print(request.json)
+    user = request.json
     locations = actions.get_locations_for_user(user)
-    print(locations)
-    return jsonify([l.name for l in locations])
+    print("locations: ",  locations)
+    return jsonify([{"name": l.name,
+                     "lat": l.latitude,
+                     "long": l.longitude,
+                     "activities": [a.name for a in l.activities]} for l in locations])
 
 
 @api.route("/api/users")

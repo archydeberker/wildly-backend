@@ -16,10 +16,13 @@ ALGORITHMS = ["RS256"]
 
 
 def retrieve_user_info(token):
+
     response = requests.get(f'https://{AUTH0_DOMAIN}/userinfo', params={'access_token': token})
     try:
         return response.json()
-    except JSONDecodeError:
+    except JSONDecodeError as e:
+        print(response)
+        print('Returning test user')
         return {'given_name': 'test', 'email': 'test@test.com', 'name': 'test'}
 
 

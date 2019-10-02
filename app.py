@@ -1,6 +1,7 @@
 from flask import Flask
 from models import db
 from routes import api
+from flask_migrate import Migrate
 
 
 def create_app():
@@ -9,6 +10,9 @@ def create_app():
     app.register_blueprint(api)
 
     db.init_app(app)
+
+    migrate = Migrate(app, db)
+
     return app
 
 
