@@ -74,3 +74,5 @@ def get_locations_for_user(user):
     user_row = models.User.query.filter_by(email=user["email"]).first()
 
     return user_row.locations
+
+
