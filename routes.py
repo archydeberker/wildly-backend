@@ -46,8 +46,17 @@ def add_location():
 @cross_origin(headers=["Content-Type", "Authorization"])
 @requires_auth
 def add_user():
-    token = get_token_auth_header()
-    user = retrieve_user_info(token)
+    """
+    This initializes the user in the backend. However, we have to be a bit careful
+    because calling this route too many times can cause timeouts from Auth0.
+
+    The riddle is, we have no way of telling whether this user is in the database or not
+    based upon the token, *without* hitting the API. I'm not sure how to deal with this.
+    """
+    print(request.json)
+    user = request.json
+    # token = get_token_auth_header()
+    # user = retrieve_user_info(token)
     actions.add_or_return_user(user)
 
     return jsonify(user)
