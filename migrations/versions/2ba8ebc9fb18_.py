@@ -1,13 +1,13 @@
 """empty message
 
-Revision ID: 99a51bb81b9f
+Revision ID: 2ba8ebc9fb18
 Revises: None
-Create Date: 2019-10-01 20:29:44.985715
+Create Date: 2019-10-18 15:31:44.969101
 
 """
 
 # revision identifiers, used by Alembic.
-revision = '99a51bb81b9f'
+revision = '2ba8ebc9fb18'
 down_revision = None
 
 from alembic import op
@@ -42,14 +42,6 @@ def upgrade():
     sa.ForeignKeyConstraint(['activity_name'], ['activity.name'], ),
     sa.ForeignKeyConstraint(['location_id'], ['location.id'], ),
     sa.PrimaryKeyConstraint('activity_name', 'location_id')
-    )
-    op.create_table('token',
-    sa.Column('token', sa.String(length=1000), nullable=False),
-    sa.Column('email', sa.String(length=100), nullable=False),
-    sa.Column('name', sa.String(length=100), nullable=True),
-    sa.ForeignKeyConstraint(['email'], ['user.email'], ),
-    sa.ForeignKeyConstraint(['name'], ['user.name'], ),
-    sa.PrimaryKeyConstraint('token')
     )
     op.create_table('trip',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -116,7 +108,6 @@ def downgrade():
     op.drop_table('user_locations')
     op.drop_table('user_interests')
     op.drop_table('trip')
-    op.drop_table('token')
     op.drop_table('tags')
     op.drop_table('user')
     op.drop_table('location')
