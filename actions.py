@@ -50,24 +50,6 @@ def add_or_return_user(user):
     return user_row
 
 
-def add_or_return_token_for_user(token, user_info=None):
-
-    token_row = models.Token.query.filter_by(token=token).first()
-
-    if token_row is None:
-        print(f"Unable to retrieve token row for user {token}")
-
-        if user_info is None:
-            user_info = retrieve_user_info(token)
-
-        token_row = models.Token(token=token,
-                                 email=user_info["email"],
-                                 name=user_info["name"])
-        models.db.session.add(token_row)
-        models.db.session.commit()
-        print(f'Added {token} to db')
-    return token_row
-
 
 def get_locations_for_user(user):
     # token_row = add_or_return_token_for_user(token)
