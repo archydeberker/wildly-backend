@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask
 from models import db
 from routes import api
@@ -6,7 +8,7 @@ from flask_migrate import Migrate
 
 def create_app():
     app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URI', 'sqlite:///db.sqlite')
     app.register_blueprint(api)
 
     db.init_app(app)
