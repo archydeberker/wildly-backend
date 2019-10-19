@@ -82,6 +82,7 @@ def list_locations_for_current_user():
     return jsonify([{"name": l.name,
                      "lat": l.latitude,
                      "long": l.longitude,
+                     "img": l.img,
                      "activities": [a.name for a in l.activities]} for l in locations])
 
 

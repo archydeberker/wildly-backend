@@ -71,6 +71,7 @@ class Location(db.Model):
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
     img = db.Column(db.String(1000))
+    google_ref = db.Column(db.String(1000))
 
     # Many to many relationships
     activities = db.relationship('Activity', secondary=activities, lazy='subquery',

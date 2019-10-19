@@ -1,5 +1,5 @@
 import models
-from auth import retrieve_user_info
+import requests
 
 
 def commit_new_location(location, user_row):
@@ -13,10 +13,18 @@ def commit_new_location(location, user_row):
     """
 
     activities = location.pop('activities')
-    print(location)
+    activities = [act['value'] for act in activities]
+
+    # Retrieve an Unsplash photo associated with that activity and add that field. We don't want to actually have to
+    # store the photo ourselves, so we will just save the unsplash URL and then use that to populate the frontend live
+
+    r = requests.get(f"https://source.unsplash.com/800x600/?{','.join([a+'ing' for a in activities])}")
+
+    location['img'] = r.url
+    print(location['img'])
     new_location = models.Location(**location)
 
-    new_location.activities = [add_or_return_activity(act['value']) for act in activities]
+    new_location.activities = [add_or_return_activity(a) for a in activities]
     new_location.users.append(user_row)
 
     models.db.session.add(new_location)
