@@ -67,7 +67,7 @@ class Trip(db.Model):
 
 class Location(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(1000), nullable=False)
+    name = db.Column(db.String(1000), nullable=False, unique=True)
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
     img = db.Column(db.String(1000))

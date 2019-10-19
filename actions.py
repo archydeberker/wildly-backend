@@ -13,6 +13,7 @@ def commit_new_location(location, user_row):
     """
 
     activities = location.pop('activities')
+    print(location)
     new_location = models.Location(**location)
 
     new_location.activities = [add_or_return_activity(act['value']) for act in activities]
@@ -50,11 +51,8 @@ def add_or_return_user(user):
     return user_row
 
 
-
 def get_locations_for_user(user):
     # token_row = add_or_return_token_for_user(token)
     user_row = models.User.query.filter_by(email=user["email"]).first()
 
     return user_row.locations
-
-
