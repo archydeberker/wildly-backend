@@ -42,6 +42,7 @@ class User(db.Model):
     email = db.Column(db.String(100), unique=True, nullable=False)
     name = db.Column(db.String(1000), nullable=False)
     last_login = db.Column(db.DateTime)
+    home_location = db.Column(db.Integer, db.ForeignKey("location.id"))
 
     # Many to many relationships
     locations = db.relationship('Location', secondary=user_locations,
