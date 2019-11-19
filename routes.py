@@ -64,26 +64,39 @@ def add_user():
 
 @api.route("/api/locations")
 @cross_origin(headers=["Content-Type", "Authorization"])
-# @requires_auth
 def list_locations():
     locations = models.Location.query.all()
 
-    return '\n'.join([f'{l.id}: {l.name}, {l.users}' for l in locations])
-
-
-@api.route("/api/user-locations",  methods=['POST'])
-@cross_origin(headers=["Content-Type", "Authorization"])
-@requires_auth
-def list_locations_for_current_user():
-    print(request.json)
-    user = request.json
-    locations = actions.get_locations_for_user(user)
-    print("locations: ",  locations)
     return jsonify([{"name": l.name,
                      "lat": l.latitude,
                      "long": l.longitude,
                      "img": l.img,
                      "activities": [a.name for a in l.activities]} for l in locations])
+
+
+@api.route("/api/user-locations",  methods=['POST'])
+@cross_origin(headers=["Content-Type", "Authorization"])
+# @requires_auth
+def list_locations_for_current_user():
+    user = request.json
+    locations = actions.get_locations_for_user(user)
+    return jsonify([{"name": l.name,
+                     "lat": l.latitude,
+                     "long": l.longitude,
+                     "img": l.img,
+                     "activities": [a.name for a in l.activities]} for l in locations])
+
+
+@api.route("/api/user-onboarded",  methods=['POST'])
+@cross_origin(headers=["Content-Type", "Authorization"])
+# @requires_auth
+def check_onboarding():
+    user_info = request.json
+    print(request)
+    user = actions.add_or_return_user(user_info)
+    home = user.home_location
+    print(home)
+    return jsonify(home is not None)
 
 
 @api.route("/api/users")

@@ -2,6 +2,12 @@ import models
 import requests
 
 
+def retrieve_home_location(user):
+    user = models.Location.query.filter_by(user['email']).first()
+
+    return user.home_location
+
+
 def commit_new_location(location, user_row):
     """
     Handles the adding of new locations to the database, and the association of the relevant
@@ -60,7 +66,6 @@ def add_or_return_user(user):
 
 
 def get_locations_for_user(user):
-    # token_row = add_or_return_token_for_user(token)
-    user_row = models.User.query.filter_by(email=user["email"]).first()
+    user_row = add_or_return_user(user)
 
     return user_row.locations
