@@ -1,4 +1,4 @@
-from app import db, create_app
+from wildly.app import db, create_app
 
 
 def initialize_db():

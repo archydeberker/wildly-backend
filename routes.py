@@ -1,13 +1,11 @@
 import json
-from pprint import pprint
 
 from flask import jsonify, request
 from flask import Blueprint
 from flask_cors import cross_origin
 
-from auth import requires_auth, requires_scope, AuthError, get_token_auth_header, retrieve_user_info
-import models
-import actions
+from wildly.auth import requires_auth, requires_scope, AuthError, get_token_auth_header, retrieve_user_info
+from wildly import actions, models
 
 api = Blueprint('api', __name__)
 
