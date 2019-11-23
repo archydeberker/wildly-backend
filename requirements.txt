@@ -9,7 +9,7 @@ certifi==2019.6.16
 cffi==1.7.0
 Click==7.0
 coverage==4.2
-ecdsa==0.13.2
+ecdsa==0.13.3
 Flask==1.1.1
 Flask-Bcrypt==0.7.1
 Flask-Cors==3.0.8
