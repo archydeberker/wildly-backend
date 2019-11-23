@@ -50,7 +50,7 @@ class User(db.Model):
     activities = db.relationship('Activity', secondary=user_interests,
                                  backref='users', lazy=True)
     trips = db.relationship('Trip', secondary=trips,
-                                 backref='users ', lazy=True)
+                                 backref='users', lazy=True)
 
     def __repr__(self):
         return f'<User {self.email}>'

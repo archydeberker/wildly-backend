@@ -1,4 +1,5 @@
 import json
+from pprint import pprint
 
 from flask import jsonify, request
 from flask import Blueprint
@@ -40,6 +41,19 @@ def add_location():
     actions.commit_new_location(location_request, user)
 
     return jsonify(location_request)
+
+
+@api.route("/api/add-user-home", methods=['POST'])
+@cross_origin(headers=["Content-Type", "Authorization"])
+@requires_auth
+def add_user_home():
+
+    home_location = request.json.pop('home_location')
+    user = request.json.pop('user')
+
+    actions.add_home_location(user, home_location)
+
+    return jsonify(home_location)
 
 
 @api.route("/api/add-user", methods=['POST'])
@@ -92,7 +106,7 @@ def list_locations_for_current_user():
 # @requires_auth
 def check_onboarding():
     user_info = request.json
-    print(request)
+    print(user_info)
     user = actions.add_or_return_user(user_info)
     home = user.home_location
     print(home)
