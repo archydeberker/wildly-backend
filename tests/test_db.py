@@ -4,7 +4,8 @@ import os
 import pytest
 from sqlalchemy.exc import IntegrityError
 
-from wildly import actions, models
+import models
+import actions
 from app import create_app, db
 
 app = create_app()

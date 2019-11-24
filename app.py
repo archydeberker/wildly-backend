@@ -3,8 +3,8 @@ import os
 from flask import Flask
 from flask_migrate import Migrate
 
-from wildly.routes import api
-from wildly.models import db
+from routes import api
+from models import db
 
 
 def create_app():
