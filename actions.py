@@ -31,8 +31,9 @@ def commit_new_location(location, user_row):
     user_row: database row corresponding to that user
 
     """
-
-    activities = location.pop("activities")
+    if len(location) is 0:
+        return
+    activities = location.get("activities", [])
     activities = [act["value"] for act in activities]
 
     # Retrieve an Unsplash photo associated with that activity and add that field. We don't want to actually have to
