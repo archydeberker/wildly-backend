@@ -33,7 +33,8 @@ def commit_new_location(location, user_row):
     """
     if len(location) is 0:
         return
-    activities = location.get("activities", [])
+
+    activities = location.pop("activities", [])
     activities = [act["value"] for act in activities]
 
     # Retrieve an Unsplash photo associated with that activity and add that field. We don't want to actually have to
@@ -44,7 +45,7 @@ def commit_new_location(location, user_row):
     )
 
     location["img"] = r.url
-    new_location = add_or_return_location((location))
+    new_location = add_or_return_location(location)
 
     new_location.activities = [add_or_return_activity(a) for a in activities]
     new_location.users.append(user_row)
@@ -65,6 +66,7 @@ def add_or_return_activity(activity):
 def add_or_return_location(location):
 
     location_row = get_location(location)
+    print(location)
     if location_row is None:
         location_row = models.Location(**location)
         models.db.session.add(location_row)
