@@ -1,6 +1,7 @@
 import requests
 
 import models
+import constants
 
 
 def retrieve_home_location(user):
@@ -52,11 +53,9 @@ def commit_new_location(location, user_row):
 
 
 def add_or_return_activity(activity):
-
     activity_row = models.Activity.query.filter_by(name=activity).first()
     if activity_row is None:
         activity_row = models.Activity(name=activity)
-
         models.db.session.add(activity_row)
 
     return activity_row
@@ -94,8 +93,13 @@ def get_locations_for_user(user):
     return user_row.locations
 
 
-def add_locations_for_user(user, locations):
-    pass
+def add_locations_and_activities_for_user(user, locations, activities):
+    user_row = add_or_return_user(user)
+
+    [user_row.locations.append(get_location(location)) for location in locations]
+    [user_row.activities.append(add_or_return_activity(activity['value'])) for activity in activities]
+    models.db.session.add(user_row)
+    models.db.session.commit()
 
 
 def set_toured(user_row):
