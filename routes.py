@@ -48,8 +48,8 @@ def add_location():
 def add_user_home():
 
     home_location = request.json.pop('home_location')
-    locations = request.json.pop('locations')
-    activities = request.json.pop('activities')
+    locations = request.json.pop('locations', [])
+    activities = request.json.pop('activities', [])
     user = request.json.pop('user')
 
     actions.add_home_location(user, home_location)

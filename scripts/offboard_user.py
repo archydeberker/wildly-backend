@@ -6,11 +6,12 @@ import actions
 from app import app
 
 if __name__ == '__main__':
-    """ Un-onboard a test user to allow us to test the onboarding again."""
+    """ Un-onboard users to allow us to test the onboarding again."""
     app.app_context().push()
-    user = actions.add_or_return_user(dict(email='berkerboy@googlemail.com'))
-    user.has_toured = False
-    user.home_location = None
+    for email in ['stephaniewillis808@gmail.com', 'berkerboy@googlemail.com']:
+        user = actions.add_or_return_user(dict(email=email))
+        user.has_toured = False
+        user.home_location = None
 
     models.db.session.add(user)
     models.db.session.commit()
