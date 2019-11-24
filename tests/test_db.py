@@ -5,7 +5,7 @@ import pytest
 from sqlalchemy.exc import IntegrityError
 
 from wildly import actions, models
-from wildly.app import create_app, db
+from app import create_app, db
 
 app = create_app()
 app.app_context().push()
@@ -54,6 +54,12 @@ class TestUser:
         actions.add_home_location(self.user, self.location)
 
         assert actions.retrieve_home_location(self.user) is not None
+
+    def test_setting_of_toured(self, test_db):
+        user = actions.add_or_return_user(self.user)
+        assert user.has_toured is None
+        actions.set_toured(user)
+        assert user.has_toured is True
 
 
 class TestActivities:
