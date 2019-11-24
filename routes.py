@@ -117,17 +117,27 @@ def check_onboarding():
 
 @api.route("/api/user-toured",  methods=['POST'])
 @cross_origin(headers=["Content-Type", "Authorization"])
-# @requires_auth
 def check_touring():
     user_info = request.json.pop('user')
-    set_tour = request.json.pop('setTour')
 
     user = actions.add_or_return_user(user_info)
+    print(f'{user} has toured set to {user.has_toured}')
 
-    if set_tour:
-        actions.set_toured(user)
+    return jsonify(user.has_toured)
 
-    return jsonify(user.has_toured is not None)
+
+@api.route("/api/set-user-toured",  methods=['POST'])
+@cross_origin(headers=["Content-Type", "Authorization"])
+def set_user_touring():
+    user_info = request.json.pop('user')
+    user = actions.add_or_return_user(user_info)
+
+    print('Setting tour')
+    actions.set_toured(user)
+
+    print(f'{user} has toured set to {user.has_toured}')
+
+    return jsonify(user.has_toured)
 
 
 @api.route("/api/users")

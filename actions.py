@@ -98,9 +98,13 @@ def get_locations_for_user(user):
 
 def add_locations_and_activities_for_user(user, locations, activities):
     user_row = add_or_return_user(user)
+    print(locations)
+    print(activities)
+    user_row.locations += [get_location(location) for location in locations]
+    user_row.activities += [add_or_return_activity(activity['value']) for activity in activities]
 
-    [user_row.locations.append(get_location(location)) for location in locations]
-    [user_row.activities.append(add_or_return_activity(activity['value'])) for activity in activities]
+    print(user_row.locations)
+    print(user_row.activities)
     models.db.session.add(user_row)
     models.db.session.commit()
 
