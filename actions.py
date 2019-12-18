@@ -7,7 +7,7 @@ import constants
 def retrieve_home_location(user):
     user_row = models.User.query.filter_by(email=user["email"]).first()
 
-    return user_row.home_location
+    return models.Location.query.filter_by(id=user_row.home_location).first()
 
 
 def add_home_location(user, location):
@@ -94,6 +94,14 @@ def get_locations_for_user(user):
     user_row = add_or_return_user(user)
 
     return user_row.locations
+
+
+def add_location_for_user(user, location):
+    """ Add an existing location to an existing user"""
+    user_row = add_or_return_user(user)
+    user_row.locations += [get_location(location)]
+    models.db.session.add(user_row)
+    models.db.session.commit()
 
 
 def add_locations_and_activities_for_user(user, locations, activities):

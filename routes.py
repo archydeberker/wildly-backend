@@ -42,6 +42,18 @@ def add_location():
     return jsonify(location_request)
 
 
+@api.route("/api/add-existing-location", methods=['POST'])
+@cross_origin(headers=["Content-Type", "Authorization"])
+@requires_auth
+def add_existing_location():
+    print(request.json)
+    location_request = request.json.pop('location')
+    user_info = request.json.pop('user')
+    actions.add_location_for_user(user_info, location_request)
+
+    return jsonify(location_request)
+
+
 @api.route("/api/add-user-home", methods=['POST'])
 @cross_origin(headers=["Content-Type", "Authorization"])
 @requires_auth
@@ -115,13 +127,23 @@ def check_onboarding():
     return jsonify(home is not None)
 
 
+@api.route("/api/user-home", methods=['POST'])
+@cross_origin(headers=["Content-Type", "Authorization"])
+# @requires_auth
+def user_home():
+    user_info = request.json
+    home = actions.retrieve_home_location(user_info)
+    print(home.latitude)
+    return jsonify({'name': home.name,
+                    'latitude': home.latitude,
+                    'longitude': home.longitude})
+
+
 @api.route("/api/user-toured",  methods=['POST'])
 @cross_origin(headers=["Content-Type", "Authorization"])
 def check_touring():
     user_info = request.json.pop('user')
-
     user = actions.add_or_return_user(user_info)
-    print(f'{user} has toured set to {user.has_toured}')
 
     return jsonify(user.has_toured)
 
@@ -131,12 +153,7 @@ def check_touring():
 def set_user_touring():
     user_info = request.json.pop('user')
     user = actions.add_or_return_user(user_info)
-
-    print('Setting tour')
     actions.set_toured(user)
-
-    print(f'{user} has toured set to {user.has_toured}')
-
     return jsonify(user.has_toured)
 
 
