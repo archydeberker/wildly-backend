@@ -1,28 +1,12 @@
 import datetime
-import os
 
 import pytest
 from sqlalchemy.exc import IntegrityError
 
 import actions
 import models
-from app import create_app, db
-
-app = create_app()
-app.app_context().push()
-
-file_path = os.path.abspath(os.getcwd())
-
-
-@pytest.fixture(scope="session")
-def test_db():
-    test_db = f"sqlite:///{file_path}/test_db.sqlite"
-    app.config["SQLALCHEMY_DATABASE_URI"] = test_db
-    db.init_app(app)
-    db.create_all(app=app)
-
-    yield db  # provide the fixture value
-    os.remove(f"{file_path}/test_db.sqlite")  # this is teardown
+from app import db
+from tests.fixtures import test_db, setup_test_app
 
 
 def test_db_creation(test_db):

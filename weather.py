@@ -1,11 +1,10 @@
 import datetime
-import os
 
 import numpy as np
 import pandas as pd
 import requests
 
-KEY = os.environ["DARKSKY_KEY"]
+from constants import DARKSKY_API_KEY
 
 
 class DarkSky:
@@ -76,12 +75,12 @@ class DarkSky:
         for t in timestamps:
             r = requests.get(
                 "https://api.darksky.net/forecast/%s/%1.4f,%1.4f,%d"
-                % (KEY, lon, lat, t),
+                % (DARKSKY_API_KEY, lon, lat, t),
                 params={"units": "si"},
             )
 
             for h in r.json()["hourly"]["data"]:
-                h["location"] = location["name"]
+                h["location"] = location["postcode"]
                 df = df.append(h, ignore_index=True)
 
         return self.post_process(df)
@@ -99,30 +98,30 @@ class DarkSky:
         lat = location["latitude"]
 
         r = requests.get(
-            "https://api.darksky.net/forecast/%s/%1.4f,%1.4f" % (KEY, lon, lat),
+            "https://api.darksky.net/forecast/%s/%1.4f,%1.4f" % (DARKSKY_API_KEY, lon, lat),
             params={"units": "si"},
         )
 
         c = r.json()["currently"]
 
-        c["location"] = location["name"]
+        c["location"] = location["postcode"]
 
         df = df.append(c, ignore_index=True)
 
         for h in r.json()["hourly"]["data"]:
-            h["location"] = location["name"]
+            h["location"] = location["postcode"]
             df = df.append(h, ignore_index=True)
 
         if daily:
             for d in r.json()["daily"]["data"]:
-                d["location"] = location["name"]
+                d["location"] = location["postcode"]
                 df = df.append(d, ignore_index=True)
 
         return self.post_process(df)
 
 
 if __name__ == "__main__":
-    location = dict(name="Rumney NH", latitude=43.8054, longitude=-71.8126)
+    location = dict(postcode="Rumney NH", latitude=43.8054, longitude=-71.8126)
     forecast = DarkSky()
     df = forecast.get_nextweek_darksky(location)
 
