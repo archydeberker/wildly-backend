@@ -1,4 +1,6 @@
 import os
+from dataclasses import dataclass
+
 import pytest
 from app import create_app
 from models import db
@@ -47,3 +49,21 @@ def test_client(setup_test_app):
 @pytest.fixture(scope='session')
 def example_forecast():
     pass
+
+
+@dataclass
+class TestLocation:
+    postcode: str
+    city: str
+    lon: float
+    lat: float
+
+
+test_locations = [TestLocation(postcode='BS6 7ER',
+                               city='Bristol',
+                               lat=51.45,
+                               lon=-2.58),
+                  TestLocation(postcode='H2S 3C2',
+                               city='Montreal',
+                               lat=45.5,
+                               lon=-73.6)]
