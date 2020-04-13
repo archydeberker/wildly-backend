@@ -2,24 +2,21 @@ import requests
 
 import models
 import geo
+import auth
+
+
+def register_new_user(email: str, postcode: str):
+    location = add_or_return_location(dict(postcode=postcode))
+    user = add_or_return_user(email, location)
+    auth.send_verification_email(user)
+
+    return user
 
 
 def retrieve_location_for_user(user: dict):
     user_row = models.User.query.filter_by(email=user["email"]).first()
 
     return models.Location.query.filter_by(id=user_row.location.id).first()
-
-
-def add_home_location(user, location):
-    """Create the `location` in the location table and associate it with a `user` """
-    user_row = add_or_return_user(user)
-    home_location = add_or_return_location(location)
-    models.db.session.add(home_location)
-    models.db.session.commit()
-    user_row.location = home_location.id
-
-    models.db.session.add(user_row)
-    models.db.session.commit()
 
 
 def add_or_return_location(location: dict):
@@ -37,6 +34,10 @@ def get_location(location):
     return models.Location.query.filter_by(postcode=location['postcode']).first()
 
 
+def get_user(email:str):
+    return models.User.query.filter_by(email=email).first()
+
+
 def add_or_return_user(email: str, location: models.Location = None):
 
     user_row = models.User.query.filter_by(email=email).first()
@@ -49,20 +50,6 @@ def add_or_return_user(email: str, location: models.Location = None):
             raise ValueError('User not found and no location specified')
 
     return user_row
-
-
-def get_locations_for_user(user):
-    user_row = add_or_return_user(user)
-
-    return user_row.locations
-
-
-def add_location_for_user(user, location):
-    """ Add an existing location to an existing user"""
-    user_row = add_or_return_user(user)
-    user_row.locations += [get_location(location)]
-    models.db.session.add(user_row)
-    models.db.session.commit()
 
 
 def set_email_verified(user_row: models.User):

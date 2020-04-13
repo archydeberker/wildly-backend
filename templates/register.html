@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.email.label }}<br>
+            {{ form.email(size=32) }}
+        </p>
+        <p>
+            {{ form.postcode.label }}<br>
+            {{ form.postcode(size=32) }}
+        </p>
+        <input class="button" type="submit" value="Register"/>
+    </form>
+    </div>
+{% endblock %}

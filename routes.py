@@ -1,32 +1,42 @@
-import json
-
-from flask import Blueprint, jsonify, request
-from flask_cors import cross_origin
-
+from flask import Blueprint, jsonify, request, render_template, flash, redirect, url_for
+from forms import RegisterForm
 import actions
-import models
-from auth import (AuthError, get_token_auth_header, requires_auth,
-                  requires_scope, retrieve_user_info)
-
+import auth
+from flask import current_app as app
 api = Blueprint("api", __name__)
 
 
-@api.route("/")
-def home():
-    return 'Hello world'
+@api.route("/", methods=['GET', 'POST'])
+def register():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        flash(f"We've sent a confirmation email to {form.email.data}, please check your inbox!")
+        actions.register_new_user(form.email.data, form.postcode.data)
+
+    return render_template('register.html', title='Register', form=form)
 
 
 @api.route("/ping")
-def ping():
-    return 'pong'
+def index():
+    return render_template('base.html')
 
 
-@api.route("/api/add-user", methods=["POST"])
-def add_user():
-    print(request)
-    postcode = request.json.pop("postcode")
-    location = actions.add_or_return_location(dict(postcode=postcode))
-    email = request.json.pop("email")
-    user = actions.add_or_return_user(email, location)
-    print(user)
-    return jsonify(user.to_dict())
+@api.route("/index")
+def home():
+    return 'home'
+
+
+@api.route("/confirm/<token>", methods=["POST"])
+def confirm_email(token):
+
+    email = auth.decode_token_to_email(app, token)
+    if email is None:
+        flash('This confirmation link is invalid or has expired', 'danger')
+    else:
+        print(f"Email confirmed for user {email}")
+        user = actions.get_user(email)
+        actions.set_email_verified(user_row=user)
+        flash('Email confirmed, thanks!', 'success')
+
+    return redirect(url_for('index'))
+
