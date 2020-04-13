@@ -1,3 +1,5 @@
+credentials*
+token*
 .idea
 *env
 *.sqlite
