@@ -69,7 +69,7 @@ class Calendar:
         # created automatically when the authorization flow completes for the first
         # time.
         if self.token_path.exists():
-            with open('token.pickle', 'rb') as token:
+            with open(self.token_path, 'rb') as token:
                 creds = pickle.load(token)
         # If there are no (valid) credentials available, let the user log in.
         if not creds or not creds.valid:

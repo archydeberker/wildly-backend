@@ -26,6 +26,11 @@ def get_lat_lon_for_postcode(postcode: str):
     return lat, lon
 
 
+def get_timezone_for_lat_lon(lat:str, lon:str):
+    j = call_timezone_api(lat, lon)
+    return j['timeZoneId']
+
+
 if __name__ == '__main__':
     lat, lon = get_lat_lon_for_postcode('H2S 3C2')
     resp = call_timezone_api(lat, lon)

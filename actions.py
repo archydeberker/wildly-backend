@@ -1,13 +1,15 @@
 import datetime
 
 import pandas as pd
-from flask import url_for, render_template
 
+import cal
 import models
 import weather
 import geo
 import auth
 from flask_mail import Mail
+
+from auth import compose_verifiation_email
 
 mail = Mail()
 
@@ -46,13 +48,6 @@ def register_new_user(email: str, postcode: str):
     auth.send_verification_email(email, 'Please confirm your email for Weather Window', html, mail)
 
     return user
-
-
-def compose_verifiation_email(email: str):
-    token = auth.generate_confirmation_token(email)
-    confirm_url = url_for('api.confirm_email', token=token, _external=True)
-    html = render_template('activate.html', confirm_url=confirm_url)
-    return html
 
 
 def retrieve_location_for_user(user: dict):
@@ -99,3 +94,34 @@ def set_email_verified(user_row: models.User):
     user_row.email_verified = True
     models.db.session.add(user_row)
     models.db.session.commit()
+
+
+def send_tomorrow_window_to_user(user: models.User):
+    calendar = cal.Calendar()
+    finder = weather.WeatherWindowFinder()
+
+    location = user.location
+
+    # In case it's a new location
+    add_tomorrows_forecast_to_db(location)
+
+    # Get weather forecast from DB for each of them, format as a dataframe
+    forecasts_df = get_forecast_for_tomorrow_from_db(location, to_pandas=True)
+
+    # Get the best weather for each of them
+    window = finder.get_weather_window_for_forecast(forecasts_df)
+
+    # Generate the calendar invite
+    timezone = geo.get_timezone_for_lat_lon(location.latitude, location.longitude)
+    event = cal.Event(location=location.postcode,
+                      summary=f"Your weather window in {location.postcode}",
+                      description=f"It's going to be {window.summary}, "
+                                  f"with a probability of rain of "
+                                  f"{window.precip_probability} and feeling like "
+                                  f"{window.apparent_temperature}°C",
+                      start=window.weather_timestamp,
+                      end=window.weather_timestamp + datetime.timedelta(hours=1),
+                      attendees=[user.email],
+                      timezone=timezone)
+
+    calendar.create_event(event)
