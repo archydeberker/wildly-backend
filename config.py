@@ -15,9 +15,9 @@ class Config(object):
     MAIL_USE_SSL = True
 
     # gmail authentication
-    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
-    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
+    MAIL_USERNAME = os.environ.get('WEATHER_WINDOW_MAIL_USERNAME')
+    MAIL_PASSWORD = os.environ.get('WEATHER_WINDOW_MAIL_PASSWORD')
 
     # mail accounts
-    MAIL_DEFAULT_SENDER = 'archy.deberker@gmail.com'
+    MAIL_DEFAULT_SENDER = 'weatherwindowapp@gmail.com'
 

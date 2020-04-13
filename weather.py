@@ -12,6 +12,7 @@ class DarkSky:
 
         self.columns = [
             "location",
+            "timezone",
             "time",
             "summary",
             "icon",
@@ -52,46 +53,7 @@ class DarkSky:
 
         return df
 
-    def get_multiple_days_darksky(self, location, days=None, hours=None):
-        """ Fetch historic data for a given time period.
-        You can specify either days OR hours, noth both."""
-
-        df = self.df_template()
-
-        if days is not None:
-            now = datetime.datetime.date(datetime.datetime.now())
-            dates = [now - datetime.timedelta(days=i) for i in range(days)]
-            timestamps = [
-                datetime.datetime.combine(d, datetime.time()).timestamp() for d in dates
-            ]
-        else:
-            now = datetime.datetime.now()
-            timestamps = [
-                (now - datetime.timedelta(hours=i)).timestamp() for i in range(hours)
-            ]
-
-        lon = location["longitude"]
-        lat = location["latitude"]
-        for t in timestamps:
-            r = requests.get(
-                "https://api.darksky.net/forecast/%s/%1.4f,%1.4f,%d"
-                % (DARKSKY_API_KEY, lon, lat, t),
-                params={"units": "si"},
-            )
-
-            for h in r.json()["hourly"]["data"]:
-                h["location"] = location["postcode"]
-                df = df.append(h, ignore_index=True)
-
-        return self.post_process(df)
-
-    def get_nextweek_darksky(self, location, daily=False):
-        """ From the DarkSky docs:
-        A Forecast Request returns the current weather conditions,
-        a minute-by-minute forecast for the next hour (where available),
-        an hour-by-hour forecast for the next 48 hours, and a day-by-day forecast for the next week.
-        """
-
+    def get_forecast_tomorrow(self, location):
         df = self.df_template()
 
         lon = location["longitude"]
@@ -101,28 +63,17 @@ class DarkSky:
             "https://api.darksky.net/forecast/%s/%1.4f,%1.4f" % (DARKSKY_API_KEY, lon, lat),
             params={"units": "si"},
         )
-
-        c = r.json()["currently"]
-
-        c["location"] = location["postcode"]
-
-        df = df.append(c, ignore_index=True)
-
-        for h in r.json()["hourly"]["data"]:
+        j = r.json()
+        for h in j["hourly"]["data"]:
             h["location"] = location["postcode"]
             df = df.append(h, ignore_index=True)
-
-        if daily:
-            for d in r.json()["daily"]["data"]:
-                d["location"] = location["postcode"]
-                df = df.append(d, ignore_index=True)
 
         return self.post_process(df)
 
 
 if __name__ == "__main__":
-    location = dict(postcode="Rumney NH", latitude=43.8054, longitude=-71.8126)
+    location = dict(postcode="Rumney NH", latitude=45.5017, longitude=-73.5673)
     forecast = DarkSky()
-    df = forecast.get_nextweek_darksky(location)
+    df = forecast.get_forecast_tomorrow(location)
 
     print(df)
