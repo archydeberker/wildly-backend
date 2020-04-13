@@ -1,18 +1,12 @@
 import json
 
-from flask import jsonify, request
-from flask import Blueprint
+from flask import Blueprint, jsonify, request
 from flask_cors import cross_origin
 
-from auth import (
-    requires_auth,
-    requires_scope,
-    AuthError,
-    get_token_auth_header,
-    retrieve_user_info,
-)
-import models
 import actions
+import models
+from auth import (AuthError, get_token_auth_header, requires_auth,
+                  requires_scope, retrieve_user_info)
 
 api = Blueprint("api", __name__)
 

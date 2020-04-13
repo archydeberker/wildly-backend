@@ -1,10 +1,11 @@
-import sys
 import os
+import sys
+
+import actions
+import models
+from app import app
 
 sys.path.insert(1, os.path.join(sys.path[0], ".."))
-import models
-import actions
-from app import app
 
 if __name__ == "__main__":
     """ Un-onboard users to allow us to test the onboarding again."""

@@ -1,7 +1,7 @@
 import requests
 
-import models
 import constants
+import models
 
 
 def retrieve_home_location(user):
@@ -31,7 +31,7 @@ def commit_new_location(location, user_row):
     user_row: database row corresponding to that user
 
     """
-    if len(location) is 0:
+    if len(location) == 0:
         return
 
     activities = location.pop("activities", [])

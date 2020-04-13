@@ -4,8 +4,8 @@ from flask import Flask
 from flask_migrate import Migrate
 
 import actions
-from routes import api
 from models import db
+from routes import api
 
 
 def create_app():

@@ -1,13 +1,14 @@
-import sys
 import os
-
-sys.path.insert(1, os.path.join(sys.path[0], ".."))
-
-import models
+import sys
 
 import actions
 import constants
+import models
 from app import app
+
+sys.path.insert(1, os.path.join(sys.path[0], ".."))
+
+
 
 if __name__ == "__main__":
     """ Add default data into the database"""
