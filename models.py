@@ -5,107 +5,39 @@ db = SQLAlchemy()
 # For an explanation of the models and relationships defined here, see
 # https://flask-sqlalchemy.palletsprojects.com/en/2.x/models/
 
-
-trips = db.Table(
-    "trips",
-    db.Column("trip_id", db.Integer, db.ForeignKey("trip.id"), primary_key=True),
-    db.Column("user_id", db.Integer, db.ForeignKey("user.id"), primary_key=True),
-)
-
-activities = db.Table(
-    "tags",
-    db.Column(
-        "activity_name",
-        db.String(1000),
-        db.ForeignKey("activity.name"),
-        primary_key=True,
-    ),
-    db.Column(
-        "location_id", db.Integer, db.ForeignKey("location.id"), primary_key=True
-    ),
-)
-
-user_interests = db.Table(
-    "user_interests",
-    db.Column("user_id", db.Integer, db.ForeignKey("user.id"), primary_key=True),
-    db.Column(
-        "activity_name",
-        db.String(1000),
-        db.ForeignKey("activity.name"),
-        primary_key=True,
-    ),
-)
-
-user_locations = db.Table(
-    "user_locations",
-    db.Column("user_id", db.Integer, db.ForeignKey("user.id"), primary_key=True),
-    db.Column(
-        "location_id", db.Integer, db.ForeignKey("location.id"), primary_key=True
-    ),
-)
+# To keep things really simple, the weather windows are not (for now) stored anywhere, but dynamically computed.
+# In the future it might make sense to add a Windows class which simply links together location_ids with specific
+# forecast IDs.
 
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(100), unique=True, nullable=False)
-    name = db.Column(db.String(1000), nullable=False)
-    last_login = db.Column(db.DateTime)
-    home_location = db.Column(db.Integer, db.ForeignKey("location.id"))
-    has_toured = db.Column(db.Boolean)
+    email_verified = db.Column(db.Boolean)
 
-    # Many to many relationships
-    locations = db.relationship(
-        "Location", secondary=user_locations, backref="users", lazy=True
-    )
-    activities = db.relationship(
-        "Activity", secondary=user_interests, backref="users", lazy=True
-    )
-    trips = db.relationship("Trip", secondary=trips, backref="users", lazy=True)
+    # 1 to 1 relationship (each user has exactly one location)
+    home_location = db.Column(db.Integer, db.ForeignKey("location.id"), nullable=False)
 
     def __repr__(self):
         return f"<User {self.email}>"
 
 
-class Trip(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    activity = db.Column(
-        "activity_name", db.String(1000), db.ForeignKey("activity.name")
-    )
-    location = db.Column("location_id", db.Integer, db.ForeignKey("location.id"))
-    timestamp = db.Column("timestamp", db.DateTime)
-
-    def __repr__(self):
-        return f"<{self.location}, {self.activity}, {self.timestamp}>"
-
-
 class Location(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(1000), nullable=False, unique=True)
+    postcode = db.Column(db.String(10), nullable=False, unique=True)
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
-    img = db.Column(db.String(1000))
     google_ref = db.Column(db.String(1000))
 
-    # Many to many relationships
-    activities = db.relationship(
-        "Activity",
-        secondary=activities,
-        lazy="subquery",
-        backref=db.backref("locations", lazy=True),
-    )
+    # Many (forecasts, users) to 1 (location) relationship
+    forecasts = db.relationship('Forecast', backref='location', lazy=True)
+    users = db.relationship('User', backref='location', lazy=True)
 
     def __repr__(self):
         return f"<Location {self.name}>"
 
 
-class Activity(db.Model):
-    name = db.Column(db.String(1000), nullable=False, primary_key=True)
-
-    def __repr__(self):
-        return f"<Activity {self.name}>"
-
-
-class Weather(db.Model):
+class Forecast(db.Model):
     """
     This table stores both forecasts and nowcasts.
 
@@ -118,7 +50,9 @@ class Weather(db.Model):
 
     """
 
+    # Many to 1 relationship: each Forecast has 1 location, but each location has many forecasts
     location = db.Column(db.Integer, db.ForeignKey("location.id"), primary_key=True)
+
     recorded_timestamp = db.Column(db.DateTime, primary_key=True)
     weather_timestamp = db.Column(db.DateTime, primary_key=True)
     apparent_temperature = db.Column(db.Float)
