@@ -2,7 +2,9 @@ from flask import Blueprint, jsonify, request, render_template, flash, redirect,
 from forms import RegisterForm
 import actions
 import auth
+from flask_mail import Mail
 from flask import current_app as app
+
 api = Blueprint("api", __name__)
 
 
@@ -26,10 +28,10 @@ def home():
     return 'home'
 
 
-@api.route("/confirm/<token>", methods=["POST"])
+@api.route("/confirm/<token>", methods=["GET", "POST"])
 def confirm_email(token):
 
-    email = auth.decode_token_to_email(app, token)
+    email = auth.decode_token_to_email(token)
     if email is None:
         flash('This confirmation link is invalid or has expired', 'danger')
     else:
@@ -38,5 +40,5 @@ def confirm_email(token):
         actions.set_email_verified(user_row=user)
         flash('Email confirmed, thanks!', 'success')
 
-    return redirect(url_for('index'))
+    return redirect(url_for('api.index'))
 
