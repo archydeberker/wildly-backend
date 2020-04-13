@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError
 import actions
 import models
 from app import db
-from tests.fixtures import test_db, setup_test_app
+from tests.fixtures import test_db, setup_test_app, test_locations
 
 
 def test_db_creation(test_db):
@@ -15,12 +15,12 @@ def test_db_creation(test_db):
 
 class TestUser:
 
-    location = dict(postcode="BS6 7EQ", longitude=123, latitude=456)
+    location = test_locations[0]
 
     @pytest.mark.runfirst
     def test_add_new_user(self, test_db):
 
-        user = dict(email="tmp@gmail.com", location=actions.add_or_return_location(self.location))
+        user = dict(email="tmp@gmail.com", location=actions.add_or_return_location(self.location.postcode))
 
         new_user = models.User(**user)
 
@@ -39,10 +39,10 @@ class TestUser:
 
     def test_retrieval_of_location(self, test_db):
         location = actions.retrieve_location_for_user(dict(email='tmp@gmail.com'))
-        assert location.postcode == self.location['postcode']
+        assert location.postcode == self.location.postcode
 
     def test_setting_of_verified(self, test_db):
-        user = actions.add_or_return_user(dict(email='tmp@gmail.com'))
+        user = actions.add_or_return_user(email='tmp@gmail.com')
         assert user.email_verified is False
         actions.set_email_verified(user)
         assert user.email_verified is True
@@ -71,6 +71,7 @@ class TestLocation:
 
 
 class TestForecast:
+    location = test_locations[0]
     @pytest.mark.runfirst
     def test_add_new_forecast(self, test_db):
 
@@ -90,3 +91,9 @@ class TestForecast:
 
         assert isinstance(u.location.forecasts, list)
         assert len(u.location.forecasts) == 1
+
+    # @pytest.mark.parametrize('location', test_locations)
+    def test_addition_of_forecast_to_db(self):
+
+        location = actions.get_location_by_postcode(postcode=self.location.postcode)
+        actions.add_tomorrows_forecast_to_db(location)

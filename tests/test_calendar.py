@@ -17,7 +17,7 @@ def test_event():
     e = Event(description='test event',
               start=datetime.datetime.now(),
               end=datetime.datetime.now() + datetime.timedelta(hours=1),
-              attendees=['berkerboy@gmail.com'],
+              attendees=[TEST_EMAIL_ACCOUNT],
               summary='this is a test event',
               location='H2R 3C2')
 
