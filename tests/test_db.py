@@ -15,12 +15,14 @@ def test_db_creation(test_db):
 
 class TestUser:
 
-    user = dict(email="tmp@gmail.com", name="My Name")
-    location = dict(name="test", longitude=123, latitude=456)
+    location = dict(postcode="BS6 7EQ", longitude=123, latitude=456)
 
     @pytest.mark.runfirst
     def test_add_new_user(self, test_db):
-        new_user = models.User(**self.user)
+
+        user = dict(email="tmp@gmail.com", location=actions.add_or_return_location(self.location))
+
+        new_user = models.User(**user)
 
         db.session.add(new_user)
         db.session.commit()
@@ -35,17 +37,15 @@ class TestUser:
 
         db.session.rollback()
 
-    def test_addition_of_home_location(self, test_db):
-        assert actions.retrieve_home_location(self.user) is None
-        actions.add_home_location(self.user, self.location)
+    def test_retrieval_of_location(self, test_db):
+        location = actions.retrieve_location(dict(email='tmp@gmail.com'))
+        assert location.postcode == self.location['postcode']
 
-        assert actions.retrieve_home_location(self.user) is not None
-
-    def test_setting_of_toured(self, test_db):
-        user = actions.add_or_return_user(self.user)
-        assert user.has_toured is None
-        actions.set_toured(user)
-        assert user.has_toured is True
+    def test_setting_of_verified(self, test_db):
+        user = actions.add_or_return_user(dict(email='tmp@gmail.com'))
+        assert user.email_verified is False
+        actions.set_email_verified(user)
+        assert user.email_verified is True
 
 
 class TestActivities:

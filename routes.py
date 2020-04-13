@@ -169,7 +169,7 @@ def check_touring():
 def set_user_touring():
     user_info = request.json.pop("user")
     user = actions.add_or_return_user(user_info)
-    actions.set_toured(user)
+    actions.set_email_verified(user)
     return jsonify(user.has_toured)
 
 

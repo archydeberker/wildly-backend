@@ -3,10 +3,10 @@ import requests
 import models
 
 
-def retrieve_home_location(user):
+def retrieve_location(user: dict):
     user_row = models.User.query.filter_by(email=user["email"]).first()
 
-    return models.Location.query.filter_by(id=user_row.home_location).first()
+    return models.Location.query.filter_by(id=user_row.location.id).first()
 
 
 def add_home_location(user, location):
@@ -15,7 +15,7 @@ def add_home_location(user, location):
     home_location = add_or_return_location(location)
     models.db.session.add(home_location)
     models.db.session.commit()
-    user_row.home_location = home_location.id
+    user_row.location = home_location.id
 
     models.db.session.add(user_row)
     models.db.session.commit()
@@ -118,7 +118,7 @@ def add_locations_and_activities_for_user(user, locations, activities):
     models.db.session.commit()
 
 
-def set_toured(user_row):
-    user_row.has_toured = True
+def set_email_verified(user_row: models.User):
+    user_row.email_verified = True
     models.db.session.add(user_row)
     models.db.session.commit()

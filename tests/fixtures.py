@@ -7,6 +7,7 @@ from models import db
 @pytest.fixture(scope='session')
 def setup_test_app():
     app = create_app()
+    app.app_context().push()
     file_path = os.path.abspath(os.getcwd())
 
     test_db = f"sqlite:///{file_path}/test_db.sqlite"
@@ -18,7 +19,6 @@ def setup_test_app():
         yield client, db
 
     os.remove(f"{file_path}/test_db.sqlite")  # this is teardown
-    os.unlink(app.config['DATABASE'])
 
 
 @pytest.fixture(scope='module')

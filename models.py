@@ -13,10 +13,10 @@ db = SQLAlchemy()
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(100), unique=True, nullable=False)
-    email_verified = db.Column(db.Boolean)
+    email_verified = db.Column(db.Boolean, default=False)
 
     # 1 to 1 relationship (each user has exactly one location)
-    home_location = db.Column(db.Integer, db.ForeignKey("location.id"), nullable=False)
+    location_id = db.Column(db.Integer, db.ForeignKey("location.id"), nullable=False)
 
     def __repr__(self):
         return f"<User {self.email}>"
@@ -34,7 +34,7 @@ class Location(db.Model):
     users = db.relationship('User', backref='location', lazy=True)
 
     def __repr__(self):
-        return f"<Location {self.name}>"
+        return f"<Location {self.postcode}>"
 
 
 class Forecast(db.Model):
@@ -51,7 +51,7 @@ class Forecast(db.Model):
     """
 
     # Many to 1 relationship: each Forecast has 1 location, but each location has many forecasts
-    location = db.Column(db.Integer, db.ForeignKey("location.id"), primary_key=True)
+    location_id = db.Column(db.Integer, db.ForeignKey("location.id"), primary_key=True)
 
     recorded_timestamp = db.Column(db.DateTime, primary_key=True)
     weather_timestamp = db.Column(db.DateTime, primary_key=True)
