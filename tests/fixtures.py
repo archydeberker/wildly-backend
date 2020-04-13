@@ -42,3 +42,8 @@ def test_client(setup_test_app):
     client, _ = setup_test_app
 
     yield client
+
+
+@pytest.fixture(scope='session')
+def example_forecast():
+    pass

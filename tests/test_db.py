@@ -48,28 +48,13 @@ class TestUser:
         assert user.email_verified is True
 
 
-class TestActivities:
-    @pytest.mark.runfirst
-    def test_add_new_activity(self, test_db):
-        new_activity = models.Activity(name="skiing")
-
-        db.session.add(new_activity)
-        db.session.commit()
-
-    def test_list_activities(self, test_db):
-        all_activities = models.Activity.query.all()
-        assert len(all_activities) == 1
-        assert all_activities[0].name == "skiing"
-
-
 class TestLocation:
     @pytest.mark.runfirst
     def test_add_new_location(self, test_db):
         new_location = models.Location(
-            name="Rumney, NH",
+            postcode="ABC DEF",
             latitude=43.8054,
             longitude=-71.8126,
-            img="https://picsum.photos/id/5/300/300",
         )
 
         db.session.add(new_location)
@@ -78,35 +63,30 @@ class TestLocation:
     def test_list_locations(self, test_db):
         all_locations = models.Location.query.all()
         assert len(all_locations) == 2  # We add one in the User class above
-        assert all_locations[-1].name == "Rumney, NH"
+        assert all_locations[-1].postcode == "ABC DEF"
+
+    def test_retrieve_users_for_locations(self, test_db):
+        location = models.Location.query.first()
+        assert isinstance(location.users, list)
 
 
-class TestTrip:
+class TestForecast:
     @pytest.mark.runfirst
-    def test_add_new_trip(self, test_db):
-        new_trip = models.Trip(
-            activity=1, location=1, timestamp=datetime.datetime.now()
-        )
+    def test_add_new_forecast(self, test_db):
 
-        db.session.add(new_trip)
+        new_forecast = models.Forecast(location_id=1, recorded_timestamp=datetime.datetime.now(),
+                                       weather_timestamp=datetime.datetime.now())
+
+        db.session.add(new_forecast)
         db.session.commit()
 
-    def test_add_users_to_trip(self, test_db):
+    def test_retrieve_forecasts_for_location(self, test_db):
 
         # Get the user we added in the TestUser class
         u = models.User.query.filter_by(id=1).first()
 
         # Add the trip we created in the test above
-        u.trips.append(models.Trip.query.filter_by(id=1).first())
+        print(u.location.forecasts)
 
-        db.session.add(u)
-        db.session.commit()
-
-    def test_retrieve_users_on_trip(self, test_db):
-        trip = models.Trip.query.filter_by(id=1).first()
-        assert trip.users[0].email == "tmp@gmail.com"
-
-
-class TestWeather:
-    pass
-    # TODO: write tests for weather
+        assert isinstance(u.location.forecasts, list)
+        assert len(u.location.forecasts) == 1
