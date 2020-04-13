@@ -13,15 +13,16 @@ app.app_context().push()
 
 file_path = os.path.abspath(os.getcwd())
 
+
 @pytest.fixture(scope="session")
 def test_db():
-    test_db = f'sqlite:///{file_path}/test_db.sqlite'
-    app.config['SQLALCHEMY_DATABASE_URI'] = test_db
+    test_db = f"sqlite:///{file_path}/test_db.sqlite"
+    app.config["SQLALCHEMY_DATABASE_URI"] = test_db
     db.init_app(app)
     db.create_all(app=app)
 
     yield db  # provide the fixture value
-    os.remove(f'{file_path}/test_db.sqlite') # this is teardown
+    os.remove(f"{file_path}/test_db.sqlite")  # this is teardown
 
 
 def test_db_creation(test_db):
@@ -30,8 +31,8 @@ def test_db_creation(test_db):
 
 class TestUser:
 
-    user = dict(email='tmp@gmail.com', name='My Name')
-    location = dict(name='test', longitude=123, latitude=456)
+    user = dict(email="tmp@gmail.com", name="My Name")
+    location = dict(name="test", longitude=123, latitude=456)
 
     @pytest.mark.runfirst
     def test_add_new_user(self, test_db):
@@ -64,10 +65,9 @@ class TestUser:
 
 
 class TestActivities:
-
     @pytest.mark.runfirst
     def test_add_new_activity(self, test_db):
-        new_activity = models.Activity(name='skiing')
+        new_activity = models.Activity(name="skiing")
 
         db.session.add(new_activity)
         db.session.commit()
@@ -75,34 +75,34 @@ class TestActivities:
     def test_list_activities(self, test_db):
         all_activities = models.Activity.query.all()
         assert len(all_activities) == 1
-        assert all_activities[0].name == 'skiing'
+        assert all_activities[0].name == "skiing"
 
 
 class TestLocation:
-
     @pytest.mark.runfirst
     def test_add_new_location(self, test_db):
-        new_location = models.Location(name='Rumney, NH',
-                                       latitude=43.8054,
-                                       longitude=-71.8126,
-                                       img='https://picsum.photos/id/5/300/300')
+        new_location = models.Location(
+            name="Rumney, NH",
+            latitude=43.8054,
+            longitude=-71.8126,
+            img="https://picsum.photos/id/5/300/300",
+        )
 
         db.session.add(new_location)
         db.session.commit()
 
     def test_list_locations(self, test_db):
         all_locations = models.Location.query.all()
-        assert len(all_locations) == 2 # We add one in the User class above
-        assert all_locations[-1].name == 'Rumney, NH'
+        assert len(all_locations) == 2  # We add one in the User class above
+        assert all_locations[-1].name == "Rumney, NH"
 
 
 class TestTrip:
-
     @pytest.mark.runfirst
     def test_add_new_trip(self, test_db):
-        new_trip = models.Trip(activity=1,
-                               location=1,
-                               timestamp=datetime.datetime.now())
+        new_trip = models.Trip(
+            activity=1, location=1, timestamp=datetime.datetime.now()
+        )
 
         db.session.add(new_trip)
         db.session.commit()
@@ -120,7 +120,7 @@ class TestTrip:
 
     def test_retrieve_users_on_trip(self, test_db):
         trip = models.Trip.query.filter_by(id=1).first()
-        assert trip.users[0].email == 'tmp@gmail.com'
+        assert trip.users[0].email == "tmp@gmail.com"
 
 
 class TestWeather:

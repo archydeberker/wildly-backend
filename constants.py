@@ -1,1 +1,1 @@
-activities = ['climb', 'run', 'hike', 'paddle', 'camp']
+activities = ["climb", "run", "hike", "paddle", "camp"]

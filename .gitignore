@@ -1,5 +1,5 @@
 .idea
-*venv
+*env
 *.sqlite
 .DS_Store
 __*__

@@ -109,7 +109,9 @@ def add_locations_and_activities_for_user(user, locations, activities):
     print(locations)
     print(activities)
     user_row.locations += [get_location(location) for location in locations]
-    user_row.activities += [add_or_return_activity(activity['value']) for activity in activities]
+    user_row.activities += [
+        add_or_return_activity(activity["value"]) for activity in activities
+    ]
 
     print(user_row.locations)
     print(user_row.activities)
