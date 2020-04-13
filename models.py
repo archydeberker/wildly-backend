@@ -21,6 +21,13 @@ class User(db.Model):
     def __repr__(self):
         return f"<User {self.email}>"
 
+    def to_dict(self):
+
+        return {'email': self.email,
+                'id': self.id,
+                'verified': self.email_verified,
+                'postcode': self.location.postcode}
+
 
 class Location(db.Model):
     id = db.Column(db.Integer, primary_key=True)

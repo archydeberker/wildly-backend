@@ -38,7 +38,7 @@ class TestUser:
         db.session.rollback()
 
     def test_retrieval_of_location(self, test_db):
-        location = actions.retrieve_location(dict(email='tmp@gmail.com'))
+        location = actions.retrieve_location_for_user(dict(email='tmp@gmail.com'))
         assert location.postcode == self.location['postcode']
 
     def test_setting_of_verified(self, test_db):

@@ -3,7 +3,6 @@ import os
 from flask import Flask
 from flask_migrate import Migrate
 
-import actions
 from models import db
 from routes import api
 
@@ -20,7 +19,7 @@ def create_app():
 
     db.init_app(app)
 
-    migrate = Migrate(app, db)
+    Migrate(app, db)
 
     return app
 
@@ -30,5 +29,5 @@ app = create_app()
 if __name__ == "__main__":
 
     app.run(
-        debug=True, host="127.0.0.1", port=5000
-    )  # run app in debug mode on port 5000
+        debug=True, port=5001
+    )
