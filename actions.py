@@ -1,4 +1,6 @@
-import requests
+import datetime
+
+import pandas as pd
 from flask import url_for, render_template
 
 import models
@@ -8,6 +10,19 @@ import auth
 from flask_mail import Mail
 
 mail = Mail()
+
+
+def get_forecast_for_tomorrow_from_db(location: models.Location, to_pandas=True):
+    today = datetime.datetime.now()
+    forecasts = models.Forecast.query.filter(models.Forecast.weather_timestamp > today,
+                                            models.Forecast.location_id == location.id)
+
+    if to_pandas:
+        output = pd.read_sql(forecasts.statement, forecasts.session.bind)
+    else:
+        output = forecasts.all()
+
+    return output
 
 
 def add_tomorrows_forecast_to_db(location: models.Location):
@@ -62,7 +77,7 @@ def get_location_by_postcode(postcode: str):
     return models.Location.query.filter_by(postcode=postcode).first()
 
 
-def get_user(email:str):
+def get_user(email: str):
     return models.User.query.filter_by(email=email).first()
 
 
