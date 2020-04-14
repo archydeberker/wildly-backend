@@ -3,7 +3,7 @@ from flask_migrate import Migrate
 from config import Config
 
 from actions import mail
-from models import db
+from models import db, User, Location, Forecast
 from routes import api
 
 
@@ -15,7 +15,6 @@ def create_app():
     app.register_blueprint(api)
 
     db.init_app(app)
-
     mail.init_app(app)
 
     Migrate(app, db)
@@ -28,6 +27,7 @@ app = create_app()
 if __name__ == "__main__":
     app.app_context().push()
     db.create_all()
+    db.session.commit()
 
     app.run(
         debug=True, port=5001
