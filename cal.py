@@ -9,9 +9,11 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 import pathlib
 
+import constants
+
+credentials_path = constants.GOOGLE_CREDENTIALS_PATH
 
 root = pathlib.Path(__file__).parent.absolute()
-credentials_path = root /'credentials.json'
 token_path = root / 'token.pickle'
 
 

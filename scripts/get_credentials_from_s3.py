@@ -10,7 +10,7 @@ def main():
     download = s3_client.get_object(Key='credentials.json', Bucket=constants.S3_BUCKET_NAME)
     content = download["Body"].read()
     content_dict = json.loads(content)
-    with open('credentials.json', 'w') as f:
+    with open(constants.GOOGLE_CREDENTIALS_PATH, 'w') as f:
         json.dump(content_dict, f)
 
 
