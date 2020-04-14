@@ -43,3 +43,7 @@ def confirm_email(token):
 
     return redirect(url_for('api.index'))
 
+
+@api.route('/google79a68bb5bf16f86a.html')
+def google_verification():
+    return render_template('google.html')
