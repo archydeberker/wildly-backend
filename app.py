@@ -13,8 +13,12 @@ def create_app():
     print(f"Using database at {app.config['SQLALCHEMY_DATABASE_URI']}")
 
     app.register_blueprint(api)
+    app.app_context().push()
 
     db.init_app(app)
+    db.create_all()
+    db.session.commit()
+
     mail.init_app(app)
 
     Migrate(app, db)
@@ -23,11 +27,8 @@ def create_app():
 
 
 app = create_app()
-db.create_all()
-db.session.commit()
 
 if __name__ == "__main__":
-    app.app_context().push()
 
     app.run(
         debug=True, port=5001
