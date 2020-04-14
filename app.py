@@ -5,7 +5,7 @@ from config import Config
 from actions import mail
 from models import db, User, Location, Forecast
 from routes import api
-
+import scripts.get_credentials_from_s3
 
 def create_app():
     app = Flask(__name__)
@@ -27,6 +27,7 @@ def create_app():
 
 
 app = create_app()
+scripts.get_credentials_from_s3.main()
 
 if __name__ == "__main__":
 
