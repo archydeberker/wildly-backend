@@ -7,6 +7,7 @@ from models import db, User, Location, Forecast
 from routes import api
 import scripts.get_credentials_from_s3
 
+
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)

@@ -1,7 +1,6 @@
 from __future__ import print_function
 import datetime
 import pickle
-import os.path
 from dataclasses import dataclass
 
 from googleapiclient.discovery import build
@@ -56,16 +55,17 @@ class Event:
 
 
 class Calendar:
-    def __init__(self, scopes=None):
+    def __init__(self, scopes=None, host=None):
 
         if scopes is None:
             scopes = ['https://www.googleapis.com/auth/calendar.events']
 
+        self.host = host
         self.scopes = scopes
         self.token_path = token_path
-        self.service = self._authenticate(self.scopes)
+        self.service = self._authenticate(self.scopes, self.host)
 
-    def _authenticate(self, scopes):
+    def _authenticate(self, scopes, host):
         creds = None
         # The file token.pickle stores the user's access and refresh tokens, and is
         # created automatically when the authorization flow completes for the first
@@ -80,7 +80,8 @@ class Calendar:
             else:
                 flow = InstalledAppFlow.from_client_secrets_file(
                     credentials_path, scopes)
-                creds = flow.run_local_server(port=0)
+                creds = flow.run_local_server(host=host or 'localhost',
+                                              port=0)
             # Save the credentials for the next run
             with open(self.token_path, 'wb') as token:
                 pickle.dump(creds, token)

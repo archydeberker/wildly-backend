@@ -1,3 +1,4 @@
+import flask
 from flask import Blueprint, jsonify, request, render_template, flash, redirect, url_for
 from forms import RegisterForm
 import actions
@@ -30,7 +31,7 @@ def ping():
 
 @api.route("/confirm/<token>", methods=["GET", "POST"])
 def confirm_email(token):
-
+    host = flask.request.host_url
     email = auth.decode_token_to_email(token)
     if email is None:
         flash('This confirmation link is invalid or has expired', 'danger')
@@ -38,7 +39,7 @@ def confirm_email(token):
         print(f"Email confirmed for user {email}")
         user = actions.get_user(email)
         actions.set_email_verified(user_row=user)
-        actions.send_tomorrow_window_to_user(user=user)
+        actions.send_tomorrow_window_to_user(user=user, host=host)
         flash('Email confirmed, thanks!', 'success')
 
     return redirect(url_for('api.index'))

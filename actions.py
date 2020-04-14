@@ -96,8 +96,8 @@ def set_email_verified(user_row: models.User):
     models.db.session.commit()
 
 
-def send_tomorrow_window_to_user(user: models.User):
-    calendar = cal.Calendar()
+def send_tomorrow_window_to_user(user: models.Location, host: str = None):
+    calendar = cal.Calendar(host=host)
     finder = weather.WeatherWindowFinder()
 
     location = user.location
