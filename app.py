@@ -23,11 +23,11 @@ def create_app():
 
 
 app = create_app()
+db.create_all()
+db.session.commit()
 
 if __name__ == "__main__":
     app.app_context().push()
-    db.create_all()
-    db.session.commit()
 
     app.run(
         debug=True, port=5001
