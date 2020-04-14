@@ -18,14 +18,14 @@ def register():
     return render_template('register.html', title='Register', form=form)
 
 
-@api.route("/ping")
+@api.route("/")
 def index():
     return render_template('base.html')
 
 
-@api.route("/index")
-def home():
-    return 'home'
+@api.route("/ping")
+def ping():
+    return 'pong'
 
 
 @api.route("/confirm/<token>", methods=["GET", "POST"])
