@@ -13,6 +13,11 @@ def main():
     with open(constants.GOOGLE_CREDENTIALS_PATH, 'w') as f:
         json.dump(content_dict, f)
 
+    download = s3_client.get_object(Key='token.pickle', Bucket=constants.S3_BUCKET_NAME)
+    content = download["Body"].read()
+    with open(constants.GOOGLE_CREDENTIALS_PATH, 'wb') as f:
+        f.write(content)
+
 
 if __name__ == '__main__':
     main()

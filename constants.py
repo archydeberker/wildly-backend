@@ -15,3 +15,4 @@ S3_BUCKET_NAME = 'weather-window'
 root = Path(__file__).parent.absolute()
 
 GOOGLE_CREDENTIALS_PATH = root / 'credentials.json'
+GOOGLE_TOKEN_PATH = root / 'token.pickle'

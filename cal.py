@@ -6,14 +6,11 @@ from dataclasses import dataclass
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
-import pathlib
 
 import constants
 
 credentials_path = constants.GOOGLE_CREDENTIALS_PATH
-
-root = pathlib.Path(__file__).parent.absolute()
-token_path = root / 'token.pickle'
+token_path = constants.GOOGLE_TOKEN_PATH
 
 
 @dataclass
@@ -55,7 +52,7 @@ class Event:
 
 
 class Calendar:
-    def __init__(self, scopes=None, host=None):
+    def __init__(self, scopes=None, host=None, token_path=token_path):
 
         if scopes is None:
             scopes = ['https://www.googleapis.com/auth/calendar.events']
