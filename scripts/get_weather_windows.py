@@ -16,7 +16,7 @@ def main():
     for location in models.Location.query.all():
         print(f'Getting users for {location}')
         # Users who we will alert
-        users = location.users
+        users = [u for u in location.users if u.email_verified]
         print(users)
 
         # Get weather forecast from DB for each of them, format as a dataframe
