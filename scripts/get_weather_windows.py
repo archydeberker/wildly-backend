@@ -8,6 +8,20 @@ import geo
 from app import create_app
 
 
+def needs_invite_for_tomorrow(user: models.User, today):
+    if user.most_recent_invite is None:
+        return True
+    if user.most_recent_invite.date() == today:
+        return False
+    return True
+
+
+def filter_users_who_already_have_invites_for_today(users):
+    today = datetime.date.today()
+    users = [u for u in users if needs_invite_for_tomorrow(u, today)]
+    return users
+
+
 def main():
     calendar = cal.Calendar()
     finder = weather.WeatherWindowFinder()
@@ -15,9 +29,13 @@ def main():
     # Get all the locations in the database
     for location in models.Location.query.all():
         print(f'Getting users for {location}')
+
         # Users who we will alert
         users = [u for u in location.users if u.email_verified]
-        print(users)
+
+        users = filter_users_who_already_have_invites_for_today(users)
+
+        print(f'Eligible users for {location} are {users}')
 
         # Get weather forecast from DB for each of them, format as a dataframe
         forecasts_df = actions.get_forecast_for_tomorrow_from_db(location, to_pandas=True)
@@ -39,6 +57,8 @@ def main():
                           timezone=timezone)
 
         calendar.create_event(event)
+
+        actions.update_most_recent_invite(users)
 
 
 if __name__ == '__main__':

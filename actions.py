@@ -1,4 +1,5 @@
 import datetime
+from typing import List
 
 import pandas as pd
 
@@ -95,6 +96,14 @@ def set_email_verified(user_row: models.User):
     models.db.session.add(user_row)
     models.db.session.commit()
 
+
+def update_most_recent_invite(users: List[models.User]):
+    now = datetime.datetime.now()
+    for u in users:
+        u.most_recent_invite = now
+        models.db.session.add(u)
+
+    models.db.session.commit()
 
 def send_tomorrow_window_to_user(user: models.Location, host: str = 'localhost'):
     calendar = cal.Calendar(host=host)
