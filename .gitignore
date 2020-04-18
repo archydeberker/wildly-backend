@@ -8,3 +8,4 @@ __*__
 *.pyc
 **/*.cache
 wildly
+*.json
