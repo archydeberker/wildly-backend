@@ -36,6 +36,9 @@ def main():
         users = filter_users_who_already_have_invites_for_today(users)
 
         print(f'Eligible users for {location} are {users}')
+        if len(users) == 0:
+            print(f"All users for this location already have a weather window, aborting")
+            return False
 
         # Get weather forecast from DB for each of them, format as a dataframe
         forecasts_df = actions.get_forecast_for_tomorrow_from_db(location, to_pandas=True)
@@ -57,7 +60,6 @@ def main():
                           timezone=timezone)
 
         calendar.create_event(event)
-
         actions.update_most_recent_invite(users)
 
 

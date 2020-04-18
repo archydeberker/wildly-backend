@@ -105,6 +105,7 @@ def update_most_recent_invite(users: List[models.User]):
 
     models.db.session.commit()
 
+
 def send_tomorrow_window_to_user(user: models.Location, host: str = 'localhost'):
     calendar = cal.Calendar(host=host)
     finder = weather.WeatherWindowFinder()
