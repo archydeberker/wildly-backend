@@ -15,8 +15,10 @@ def main():
 
     download = s3_client.get_object(Key='token.pickle', Bucket=constants.S3_BUCKET_NAME)
     content = download["Body"].read()
-    with open(constants.GOOGLE_CREDENTIALS_PATH, 'wb') as f:
+    with open(constants.GOOGLE_TOKEN_PATH, 'wb') as f:
         f.write(content)
+
+    print('Credentials succesfully fetched from S3')
 
 
 if __name__ == '__main__':
