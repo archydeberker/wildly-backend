@@ -1,5 +1,4 @@
 import os
-import secrets
 
 
 class Config(object):
@@ -7,6 +6,7 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = os.environ.get(
         "DATABASE_URL", "sqlite:///db.sqlite"
     )
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # mail settings
     MAIL_SERVER = 'smtp.googlemail.com'
