@@ -19,7 +19,7 @@ def register():
         try:
             actions.register_new_user(form.email.data, form.postcode.data)
         except SMTPRecipientsRefused:
-            flash(f"We couldn't send an email to {form.email.data}, please check and try again!", warning)
+            flash(f"We couldn't send an email to {form.email.data}, please check and try again!", category="warning")
 
     return render_template('register.html', title='Register', form=form)
 
@@ -31,15 +31,11 @@ def index():
 
 @api.route("/ping")
 def ping():
-    host = flask.request.host_url
-    print(host)
     return 'pong'
 
 
 @api.route("/confirm/<token>", methods=["GET", "POST"])
 def confirm_email(token):
-    host = flask.request.host_url
-    print(host)
     email = auth.decode_token_to_email(token)
     if email is None:
         flash('This confirmation link is invalid or has expired', 'danger')

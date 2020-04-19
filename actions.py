@@ -8,6 +8,7 @@ import models
 import weather
 import geo
 import auth
+
 from flask_mail import Mail
 
 from auth import compose_verifiation_email
@@ -41,6 +42,7 @@ def add_tomorrows_forecast_to_db(location: models.Location):
 
 
 def register_new_user(email: str, postcode: str):
+    postcode = normalize_postcode(postcode)
     location = add_or_return_location(postcode)
     user = add_or_return_user(email, location)
 
