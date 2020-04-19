@@ -48,7 +48,7 @@ def confirm_email(token):
         print(f"Email confirmed for user {email}")
         user = actions.get_user(email)
         actions.set_email_verified(user_row=user)
-        #TODO: we can do this async, move it to a cron job
+        # TODO: we can do this async, move it to a cron job
         actions.send_tomorrow_window_to_user(user=user)
         flash('Email confirmed, thanks! Check your calendar, you should have an invite for tomorrow!', 'success')
 

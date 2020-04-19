@@ -50,7 +50,7 @@ def register_new_user(email: str, postcode: str):
     html = compose_verifiation_email(email)
 
     auth.send_verification_email(email, 'Please confirm your email for Weather Window', html, mail)
-
+    print(f'Sent a verification email to {email} for {postcode}')
     return user
 
 
