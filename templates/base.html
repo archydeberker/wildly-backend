@@ -1,7 +1,7 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
- <link rel="stylesheet" href="/static/assets/css/mystyles.css">
+    <link rel="stylesheet" href="/static/assets/css/mystyles.css">
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
     <title>{{ title }}</title>
     <script>
@@ -14,34 +14,44 @@
         });
       });
     });
-</script>
+
+    </script>
 </head>
 
 <body>
-<div class="section" style="padding-top: 10px; padding-left: 10px;
-background-image: linear-gradient(#C48A8A 3%, #F9F491); height:100%">
-<nav class="navbar is-transparent" role="navigation" aria-label="main navigation"
-style="background-color:transparent">
-  <div class="navbar-brand is-transparent">
-    <span class="has-text-primary has-text-weight-bold"> breaktime </span>
-  </div>
-</nav>
 
-{% with messages = get_flashed_messages() %}
-{% if messages %}
-<ul class=flashes>
-    {% for message in messages %}
-    <div class="notification is-light is-primary has-text-grey is-transparent"><button class="delete"></button>
-        {{ message }}
-    </div>
-    {% endfor %}
-</ul>
 
-{% endif %}
-{% endwith %}
-{% block content %}
+<div class="section is-paddingless" style="background-image: linear-gradient(#C48A8A 3%, #F9F491);
+min-height:100%">
+
+        <nav class="navbar is-transparent" role="navigation" aria-label="main navigation"
+         style="background-color:transparent">
+        <div class="navbar-brand is-transparent" style="padding: 20px">
+            <span class="has-text-primary has-text-weight-bold"> weather window </span>
+        </div>
+    </nav>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul class=flashes>
+        {% for message in messages %}
+        <div class="notification is-light is-primary has-text-grey is-transparent">
+            <button class="delete"></button>
+            {{ message }}
+        </div>
+        {% endfor %}
+    </ul>
+
+    {% endif %}
+    {% endwith %}
+    {% block content %}
     {% endblock %}
 
-    </div>
+</div>
+
+<div class=" section has-background-white columns" style="padding-top:20; padding-bottom:20; margin-top: 50px">
+    <div class="column is-one-half has-text-left"> <span class="has-text-weight-light" > Built with ❤️ in Montreal during 😷 lockdown by <a href="https://www.linkedin.com/in/archy-de-berker/">Archy</a> and
+        <a href="https://www.linkedin.com/in/claudelrheault/">Claudel</a> </span> </div>
+    <div class="column is-one-half has-text-right"> <span class="has-text-weight-light" > Feedback? Drop us an <a href="mailto:weatherwindowapp@gmail.com"> email </a> or a <a href="https://ctt.ac/U4Ubl"> Tweet </a></span></div>
+</div>
 </body>
 </html>
