@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
-<section class="hero has-bg-img" style="width:100%; padding-bottom:7%; padding-top:2%">
+<section class="hero section has-bg-img" style="width:100%; padding-bottom:6%; padding-top:2%">
     <div class="container">
-        <div class="columns is-centered">
+        <div class="columns is-centered" style="padding-bottom: 20px">
             <div class="column is-half">
                 <h1 class="is-size-1 has-text-white has-text-centered">
                     Sun is Calling
@@ -44,73 +44,76 @@
         </form>
     </div>
 </section>
-<div class="container has-background-white is-rounded" style="border-radius: 20px; padding: 20px">
-    <h1 class="has-text-centered title has-text-grey has-text-weight-light"> How it works</h1>
-    <div class="columns">
-        <div class="column has-text-centered">
-            <figure class="image" style="height:200px">
-                <img src="/static/assets/images/breaktime-col1.png"
-                     style="width:180px; display: inline-block">
-            </figure>
-            <div class="column">Everyday, we look up the weather in your area</div>
-        </div>
-        <div class="column has-text-centered">
-            <figure class="image" style="height:200px">
-                <img src="/static/assets/images/breaktime-col2.png"
-                     style="width:180px; display: inline-block">
-            </figure>
-            <div class="column">We send you a calendar invite for the best hour</div>
-        </div>
-        <div class="column has-text-centered">
-            <figure class="image" style="height:200px">
-                <img src="/static/assets/images/breaktime-col3.png"
-                     style="width:180px; display: inline-block">
-            </figure>
-            <div class="column">So you can take a break and get some sweet fresh air</div>
-        </div>
-    </div>
-    <div class="columns has-text-centered is-8 is-variable">
-    </div>
-</div>
-<div class="container" style="padding-top:100px">
-    <div class="columns is-centered">
-        <div class="column is-one-quarter">
-            <figure class="image is-64x64" style="margin-bottom: 20px"><img src="/static/assets/images/clock.png">
-            </figure>
-            <p class="subtitle"> Want to make sure you stretch your legs and refresh your brain? </p>
-        </div>
-        <div class="column  is-one-quarter">
-               <form action="" method="post" novalidate>
-            {{ form.hidden_tag() }}
-
-            <p class="subtitle"> Let us find the time for a perfect pause</p>
-            <div class="field">
-                <p class="control has-icons-left has-icons-right">
-                    <input required id={{ form.email.id }} class="input" name="email" type="email" placeholder="Email">
-                    <span class="icon is-small is-left">
-                    <i class="fas fa-envelope"></i>
-                    </span>
-                </p>
+<section class="section">
+    <div class="container has-background-white is-rounded" style="border-radius: 20px; padding: 20px">
+        <h1 class="has-text-centered title has-text-grey has-text-weight-light"> How it works</h1>
+        <div class="columns">
+            <div class="column has-text-centered">
+                <figure class="image" style="height:200px">
+                    <img src="/static/assets/images/breaktime-col1.png"
+                         style="width:180px; display: inline-block">
+                </figure>
+                <div class="column">Everyday, we look up the weather in your area</div>
             </div>
-            <div class="field is-horizontal">
-                <div class="field-body">
+            <div class="column has-text-centered">
+                <figure class="image" style="height:200px">
+                    <img src="/static/assets/images/breaktime-col2.png"
+                         style="width:180px; display: inline-block">
+                </figure>
+                <div class="column">We send you a calendar invite for the best hour</div>
+            </div>
+            <div class="column has-text-centered">
+                <figure class="image" style="height:200px">
+                    <img src="/static/assets/images/breaktime-col3.png"
+                         style="width:180px; display: inline-block">
+                </figure>
+                <div class="column">So you can take a break and get some sweet fresh air</div>
+            </div>
+        </div>
+        <div class="columns has-text-centered is-8 is-variable">
+        </div>
+    </div>
+    <div class="container" style="padding-top:100px">
+        <div class="columns is-centered">
+            <div class="column is-one-quarter">
+                <figure class="image is-64x64" style="margin-bottom: 20px"><img src="/static/assets/images/clock.png">
+                </figure>
+                <p class="subtitle"> Want to make sure you stretch your legs and refresh your brain? </p>
+            </div>
+            <div class="column  is-one-quarter">
+                <form action="" method="post" novalidate>
+                    {{ form.hidden_tag() }}
 
+                    <p class="subtitle"> Let us find the time for a perfect pause</p>
                     <div class="field">
                         <p class="control has-icons-left has-icons-right">
-                            <input required id={{ form.postcode.id }} class="input" name="postcode" type="text"
-                                   placeholder="Postcode">
+                            <input required id={{ form.email.id }} class="input" name="email" type="email"
+                                   placeholder="Email">
                             <span class="icon is-small is-left">
-                    <i class="fas fa-map-marker"></i>
+                    <i class="fas fa-envelope"></i>
                     </span>
                         </p>
                     </div>
-                    <div class="field">
-                        <input class="button is-primary" type="submit" value="Register"/>
-                    </div>
-                </div>
-            </div>
+                    <div class="field is-horizontal">
+                        <div class="field-body">
 
-               </form>
+                            <div class="field">
+                                <p class="control has-icons-left has-icons-right">
+                                    <input required id={{ form.postcode.id }} class="input" name="postcode" type="text"
+                                           placeholder="Postcode">
+                                    <span class="icon is-small is-left">
+                    <i class="fas fa-map-marker"></i>
+                    </span>
+                                </p>
+                            </div>
+                            <div class="field">
+                                <input class="button is-primary" type="submit" value="Register"/>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
         </div>
-    </div>
-    {% endblock %}
+</section>
+{% endblock %}

@@ -21,6 +21,7 @@ $size-1: 4rem;
 .has-bg-img { background: url('/static/assets/images/clouds.png')
                center center;
                 background-repeat: no-repeat;
-                width: 100%}
+                width: 100%;
+                }
 
 @import "../bulma-0.8/bulma.sass";
