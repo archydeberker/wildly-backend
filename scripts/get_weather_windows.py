@@ -5,23 +5,8 @@ import models
 import weather
 import cal
 import geo
+from actions import filter_users_who_already_have_invites_for_today
 from app import create_app
-
-
-def needs_invite_for_tomorrow(user: models.User, today):
-    if user.email == 'berkerboy@gmail.com':
-        return True
-    if user.most_recent_invite is None:
-        return True
-    if user.most_recent_invite.date() == today:
-        return False
-    return True
-
-
-def filter_users_who_already_have_invites_for_today(users):
-    today = datetime.date.today()
-    users = [u for u in users if needs_invite_for_tomorrow(u, today)]
-    return users
 
 
 def main():

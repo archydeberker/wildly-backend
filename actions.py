@@ -118,6 +118,11 @@ def send_tomorrow_window_to_user(user: models.Location, host: str = 'localhost')
     # In case it's a new location
     add_tomorrows_forecast_to_db(location)
 
+    today = datetime.date.today()
+    if not needs_invite_for_tomorrow(user, today):
+        print("New user already has an invite, aborting")
+        return
+
     # Get weather forecast from DB for each of them, format as a dataframe
     forecasts_df = get_forecast_for_tomorrow_from_db(location, to_pandas=True)
 
@@ -127,7 +132,7 @@ def send_tomorrow_window_to_user(user: models.Location, host: str = 'localhost')
     # Generate the calendar invite
     timezone = geo.get_timezone_for_lat_lon(location.latitude, location.longitude)
     event = cal.Event(location=location.postcode,
-                      summary=f"Your weather window in {location.postcode}",
+                      summary=f"🌞 Your weather window in {location.postcode}",
                       description=f"It's going to be {window.summary}, "
                                   f"with a probability of rain of "
                                   f"{window.precip_probability} and feeling like "
@@ -138,3 +143,20 @@ def send_tomorrow_window_to_user(user: models.Location, host: str = 'localhost')
                       timezone=timezone)
 
     calendar.create_event(event)
+    update_most_recent_invite([user])
+
+
+def filter_users_who_already_have_invites_for_today(users):
+    today = datetime.date.today()
+    users = [u for u in users if needs_invite_for_tomorrow(u, today)]
+    return users
+
+
+def needs_invite_for_tomorrow(user: models.User, today):
+    if user.email == 'berkerboy@gmail.com':
+        return True
+    if user.most_recent_invite is None:
+        return True
+    if user.most_recent_invite.date() == today:
+        return False
+    return True
