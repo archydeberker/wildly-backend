@@ -1,17 +1,50 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container">
-    <form action="" method="post" novalidate>
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.email.label }}<br>
-            {{ form.email(size=32) }}
-        </p>
-        <p>
-            {{ form.postcode.label }}<br>
-            {{ form.postcode(size=32) }}
-        </p>
-        <input class="button" type="submit" value="Register"/>
-    </form>
+<section class="hero has-bg-img" style="width:100%; min-height: 800px">
+    <div class="container">
+        <div class="columns is-centered">
+        <div class="column is-half">
+        <h1 class="is-size-1 has-text-white has-text-centered">
+            The Sun is Calling
+        </h1>
+        <h2 class="subtitle  has-text-white has-text-centered"> Every day we'll tell you the best time
+            to get out and enjoy some fresh air.</h2>
+            </div>
+        </div>
+        <form action="" method="post" novalidate>
+            {{ form.hidden_tag() }}
+
+            <div class="field is-horizontal">
+                <div class="field-body">
+                    <div class="field">
+                        <p class="control has-icons-left has-icons-right">
+                            <input required id={{ form.email.id }} class="input" name="email" type="email" placeholder="Email">
+                            <span class="icon is-small is-left">
+                    <i class="fas fa-envelope"></i>
+                    </span>
+                        </p>
+                        <p class="help has-text-white">We'll send a calendar invite each day</p>
+                    </div>
+                    <div class="field">
+                        <p class="control has-icons-left has-icons-right">
+                            <input required id={{ form.postcode.id }} class="input" name="postcode" type="text" placeholder="Postcode">
+                            <span class="icon is-small is-left">
+                    <i class="fas fa-map-marker"></i>
+                    </span>
+                        </p>
+                        <p class="help has-text-white">with the best weather for this location</p>
+                    </div>
+                    <div class="field">
+                        <input class="button is-primary" type="submit" value="Register"/>
+                    </div>
+                </div>
+            </div>
+
+
+        </form>
     </div>
+</section>
+<section class="">
+
+</section>
 {% endblock %}

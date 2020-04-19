@@ -1,0 +1,26 @@
+@charset "utf-8";
+
+// Import a Google Font
+@import url('https://fonts.googleapis.com/css?family=Poppins:500,700');
+
+// Set your brand colors
+$link: rgba(127, 0, 0);
+$yellow: #FFEB3B;
+$pink: #ea9085;
+$dusk: #fdd998;
+$primary: $yellow;
+
+// Update Bulma's global variables
+$family-serif: "Times New Roman";
+$family-sans-serif: "Poppins";
+$family-primary: $family-sans-serif;
+
+$size-1: 4rem;
+
+.has-bg-img { background: url('/static/assets/images/clouds.png')
+               center center;
+                max-height: 50%;
+                background-repeat: no-repeat;
+                width: 100%}
+
+@import "../bulma-0.8/bulma.sass";

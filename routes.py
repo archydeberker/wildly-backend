@@ -5,8 +5,6 @@ from flask import Blueprint, jsonify, request, render_template, flash, redirect,
 from forms import RegisterForm
 import actions
 import auth
-from flask_mail import Mail
-from flask import current_app as app
 
 api = Blueprint("api", __name__)
 
@@ -15,17 +13,24 @@ api = Blueprint("api", __name__)
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
-        flash(f"We've sent a confirmation email to {form.email.data}, please check your inbox!")
         try:
             actions.register_new_user(form.email.data, form.postcode.data)
+            flash(f"We've sent a confirmation email to {form.email.data}, please check your inbox!")
         except SMTPRecipientsRefused:
             flash(f"We couldn't send an email to {form.email.data}, please check and try again!", category="warning")
-
-    return render_template('register.html', title='Register', form=form)
+        except IndexError:
+            flash(f" We couldn't find a location for {form.postcode.data}, please check and try again!")
+    return render_template('register.html', title='Weather Window', form=form)
 
 
 @api.route("/")
 def index():
+    return render_template('base.html')
+
+
+@api.route("/flash")
+def test_flash():
+    flash('This is a test flash')
     return render_template('base.html')
 
 

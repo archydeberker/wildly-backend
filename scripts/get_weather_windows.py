@@ -9,6 +9,8 @@ from app import create_app
 
 
 def needs_invite_for_tomorrow(user: models.User, today):
+    if user.email == 'berkerboy@gmail.com':
+        return True
     if user.most_recent_invite is None:
         return True
     if user.most_recent_invite.date() == today:
@@ -38,7 +40,7 @@ def main():
         print(f'Eligible users for {location} are {users}')
         if len(users) == 0:
             print(f"All users for this location already have a weather window, aborting")
-            return False
+            continue
 
         # Get weather forecast from DB for each of them, format as a dataframe
         forecasts_df = actions.get_forecast_for_tomorrow_from_db(location, to_pandas=True)
@@ -49,7 +51,7 @@ def main():
         # Generate the calendar invite
         timezone = geo.get_timezone_for_lat_lon(location.latitude, location.longitude)
         event = cal.Event(location=location.postcode,
-                          summary=f"Your weather window in {location.postcode}",
+                          summary=f" 🌞 Your weather window in {location.postcode} 🌞",
                           description=f"It's going to be {window.summary}, "
                                       f"with a probability of rain of "
                                       f"{window.precip_probability} and feeling like "

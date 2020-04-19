@@ -1,22 +1,47 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css">
+ <link rel="stylesheet" href="/static/assets/css/mystyles.css">
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
     <title>{{ title }}</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+      (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
+        $notification = $delete.parentNode;
+
+        $delete.addEventListener('click', () => {
+          $notification.parentNode.removeChild($notification);
+        });
+      });
+    });
+</script>
 </head>
 
 <body>
+<div class="section" style="padding-top: 10px; padding-left: 10px;
+background-image: linear-gradient(#C48A8A 3%, #F9F491); height:100%">
+<nav class="navbar is-transparent" role="navigation" aria-label="main navigation"
+style="background-color:transparent">
+  <div class="navbar-brand is-transparent">
+    <span class="has-text-primary has-text-weight-bold"> breaktime </span>
+  </div>
+</nav>
+
 {% with messages = get_flashed_messages() %}
 {% if messages %}
 <ul class=flashes>
     {% for message in messages %}
-    <div class="notification">{{ message }}</div>
+    <div class="notification is-light is-primary has-text-grey is-transparent"><button class="delete"></button>
+        {{ message }}
+    </div>
     {% endfor %}
 </ul>
+
 {% endif %}
 {% endwith %}
+{% block content %}
+    {% endblock %}
 
-{% block content %}{% endblock %}
+    </div>
 </body>
 </html>
