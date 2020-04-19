@@ -8,6 +8,7 @@ import models
 import weather
 import geo
 import auth
+from data import normalize_postcode
 
 from flask_mail import Mail
 
