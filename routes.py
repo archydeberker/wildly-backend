@@ -1,3 +1,5 @@
+from smtplib import SMTPRecipientsRefused
+
 import flask
 from flask import Blueprint, jsonify, request, render_template, flash, redirect, url_for
 from forms import RegisterForm
@@ -14,7 +16,10 @@ def register():
     form = RegisterForm()
     if form.validate_on_submit():
         flash(f"We've sent a confirmation email to {form.email.data}, please check your inbox!")
-        actions.register_new_user(form.email.data, form.postcode.data)
+        try:
+            actions.register_new_user(form.email.data, form.postcode.data)
+        except SMTPRecipientsRefused:
+            flash(f"We couldn't send an email to {form.email.data}, please check and try again!", warning)
 
     return render_template('register.html', title='Register', form=form)
 
