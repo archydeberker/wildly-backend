@@ -8,11 +8,10 @@ import models
 import weather
 import geo
 import auth
-from data import normalize_postcode
 
 from flask_mail import Mail
 
-from auth import compose_verifiation_email
+from auth import compose_verification_email
 
 mail = Mail()
 
@@ -42,15 +41,14 @@ def add_tomorrows_forecast_to_db(location: models.Location):
     models.db.session.commit()
 
 
-def register_new_user(email: str, postcode: str):
-    postcode = normalize_postcode(postcode)
-    location = add_or_return_location(postcode)
+def register_new_user(email: str, place: str):
+    location = add_or_return_location(place)
     user = add_or_return_user(email, location)
 
-    html = compose_verifiation_email(email)
+    html = compose_verification_email(email)
 
     auth.send_verification_email(email, 'Please confirm your email for Weather Window', html, mail)
-    print(f'Sent a verification email to {email} for {postcode}')
+    print(f'Sent a verification email to {email} for {place}')
     return user
 
 
@@ -60,20 +58,20 @@ def retrieve_location_for_user(user: dict):
     return models.Location.query.filter_by(id=user_row.location.id).first()
 
 
-def add_or_return_location(postcode: str):
+def add_or_return_location(place: str):
 
-    location_row = get_location_by_postcode(postcode)
+    location_row = get_location_by_place(place)
     if location_row is None:
-        location = dict(postcode=postcode)
-        location['latitude'], location['longitude'] = geo.get_lat_lon_for_postcode(location['postcode'])
+        location = dict(place=place)
+        location['latitude'], location['longitude'] = geo.get_lat_lon_for_place(location['place'])
         location_row = models.Location(**location)
         models.db.session.add(location_row)
 
     return location_row
 
 
-def get_location_by_postcode(postcode: str):
-    return models.Location.query.filter_by(postcode=postcode).first()
+def get_location_by_place(place: str):
+    return models.Location.query.filter_by(place=place).first()
 
 
 def get_user(email: str):
@@ -109,7 +107,7 @@ def update_most_recent_invite(users: List[models.User]):
     models.db.session.commit()
 
 
-def send_tomorrow_window_to_user(user: models.Location, host: str = 'localhost'):
+def send_tomorrow_window_to_user(user: models.User  , host: str = 'localhost'):
     calendar = cal.Calendar(host=host)
     finder = weather.WeatherWindowFinder()
 
@@ -131,16 +129,7 @@ def send_tomorrow_window_to_user(user: models.Location, host: str = 'localhost')
 
     # Generate the calendar invite
     timezone = geo.get_timezone_for_lat_lon(location.latitude, location.longitude)
-    event = cal.Event(location=location.postcode,
-                      summary=f"🌞 Your weather window in {location.postcode}",
-                      description=f"It's going to be {window.summary}, "
-                                  f"with a probability of rain of "
-                                  f"{window.precip_probability} and feeling like "
-                                  f"{window.apparent_temperature}°C",
-                      start=window.weather_timestamp,
-                      end=window.weather_timestamp + datetime.timedelta(hours=1),
-                      attendees=[user.email],
-                      timezone=timezone)
+    event = cal.get_calendar_event(location, window, attendees=[user], timezone=timezone)
 
     calendar.create_event(event)
     update_most_recent_invite([user])

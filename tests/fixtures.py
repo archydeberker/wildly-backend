@@ -2,25 +2,22 @@ import os
 from dataclasses import dataclass
 
 import pytest
-from app import create_app
+from app_factory import create_app
 from models import db
+from config import TestConfig
 
 
 @pytest.fixture(scope='session')
 def setup_test_app():
-    app = create_app()
-    app.app_context().push()
-    file_path = os.path.abspath(os.getcwd())
 
-    test_db = f"sqlite:///{file_path}/test_db.sqlite"
-    app.config["SQLALCHEMY_DATABASE_URI"] = test_db
-    db.init_app(app)
-    db.create_all(app=app)
+    app = create_app(config=TestConfig)
+    app.app_context().push()
 
     with app.test_client() as client:
         yield client, db
 
-    os.remove(f"{file_path}/test_db.sqlite")  # this is teardown
+    print('Removing Test DB')
+    os.remove(TestConfig.db_filepath)  # this is teardown
 
 
 @pytest.fixture(scope='module')
@@ -53,17 +50,17 @@ def example_forecast():
 
 @dataclass
 class TestLocation:
-    postcode: str
+    place: str
     city: str
     lon: float
     lat: float
 
 
-test_locations = [TestLocation(postcode='BS6 7ER',
+test_locations = [TestLocation(place='Redland, Bristol, UK',
                                city='Bristol',
                                lat=51.45,
                                lon=-2.58),
-                  TestLocation(postcode='H2S 3C2',
+                  TestLocation(place='Montreal, QC, Canada',
                                city='Montreal',
                                lat=45.5,
                                lon=-73.6)]

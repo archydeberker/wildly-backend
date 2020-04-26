@@ -1,12 +1,11 @@
-import datetime
-
 import actions
 import models
 import weather
 import cal
 import geo
 from actions import filter_users_who_already_have_invites_for_today
-from app import create_app
+from app_factory import create_app
+from cal import get_calendar_event
 
 
 def main():
@@ -35,17 +34,8 @@ def main():
 
         # Generate the calendar invite
         timezone = geo.get_timezone_for_lat_lon(location.latitude, location.longitude)
-        event = cal.Event(location=location.postcode,
-                          summary=f" 🌞 Your weather window in {location.postcode} 🌞",
-                          description=f"It's going to be {window.summary}, "
-                                      f"with a probability of rain of "
-                                      f"{window.precip_probability} and feeling like "
-                                      f"{window.apparent_temperature}°C",
-                          start=window.weather_timestamp,
-                          end=window.weather_timestamp + datetime.timedelta(hours=1),
-                          attendees=[u.email for u in users],
-                          timezone=timezone)
 
+        event = get_calendar_event(location, window, attendees=[u.email for u in users], timezone=timezone)
         calendar.create_event(event)
         actions.update_most_recent_invite(users)
 
