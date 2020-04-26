@@ -43,7 +43,7 @@ def add_tomorrows_forecast_to_db(location: models.Location):
 
 
 def register_new_user(email: str, postcode: str):
-    postcode = normalize_postcode(postcode)
+    # postcode = normalize_postcode(postcode)
     location = add_or_return_location(postcode)
     user = add_or_return_user(email, location)
 
@@ -65,7 +65,7 @@ def add_or_return_location(postcode: str):
     location_row = get_location_by_postcode(postcode)
     if location_row is None:
         location = dict(postcode=postcode)
-        location['latitude'], location['longitude'] = geo.get_lat_lon_for_postcode(location['postcode'])
+        location['latitude'], location['longitude'] = geo.get_lat_lon_for_place(location['postcode'])
         location_row = models.Location(**location)
         models.db.session.add(location_row)
 
@@ -109,7 +109,7 @@ def update_most_recent_invite(users: List[models.User]):
     models.db.session.commit()
 
 
-def send_tomorrow_window_to_user(user: models.Location, host: str = 'localhost'):
+def send_tomorrow_window_to_user(user: models.User  , host: str = 'localhost'):
     calendar = cal.Calendar(host=host)
     finder = weather.WeatherWindowFinder()
 
@@ -131,16 +131,7 @@ def send_tomorrow_window_to_user(user: models.Location, host: str = 'localhost')
 
     # Generate the calendar invite
     timezone = geo.get_timezone_for_lat_lon(location.latitude, location.longitude)
-    event = cal.Event(location=location.postcode,
-                      summary=f"🌞 Your weather window in {location.postcode}",
-                      description=f"It's going to be {window.summary}, "
-                                  f"with a probability of rain of "
-                                  f"{window.precip_probability} and feeling like "
-                                  f"{window.apparent_temperature}°C",
-                      start=window.weather_timestamp,
-                      end=window.weather_timestamp + datetime.timedelta(hours=1),
-                      attendees=[user.email],
-                      timezone=timezone)
+    event = cal.get_calendar_event(location, window, attendees=[user], timezone=timezone)
 
     calendar.create_event(event)
     update_most_recent_invite([user])

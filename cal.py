@@ -94,3 +94,19 @@ class Calendar:
 
     def delete_event(self, event_id):
         self.service.events().delete(calendarId='primary', eventId=event_id).execute()
+
+
+def get_calendar_event(location, window, attendees, timezone):
+    return Event(location=location.postcode,
+                 summary=f" 🌞 Your weather window in {location.postcode}",
+                 description=f"It's going to be {window.summary}, "
+                             f"with a probability of rain of "
+                             f"{window.precip_probability} and feeling like "
+                             f"{window.apparent_temperature}°C."
+                             f"<br> <br>"
+                             f"Jealous of your colleague's weather window?"
+                             f" Get your own at https://weather-window-app.herokuapp.com",
+                 start=window.weather_timestamp,
+                 end=window.weather_timestamp + datetime.timedelta(hours=1),
+                 attendees=attendees,
+                 timezone=timezone)

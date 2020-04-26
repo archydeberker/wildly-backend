@@ -4,6 +4,7 @@ import flask
 from flask import Blueprint, jsonify, request, render_template, flash, redirect, url_for
 from forms import RegisterForm
 import actions
+import constants
 import auth
 
 api = Blueprint("api", __name__)
@@ -20,12 +21,16 @@ def register():
             flash(f"We couldn't send an email to {form.email.data}, please check and try again!", category="warning")
         except IndexError:
             flash(f" We couldn't find a location for {form.postcode.data}, please check and try again!")
-    return render_template('register.html', title='Weather Window', form=form)
+    return render_template('register.html', title='Weather Window', form=form, GOOGLE_API_KEY=constants.GOOGLE_API_KEY)
 
 
 @api.route("/")
 def index():
     return render_template('base.html')
+
+@api.route("/map")
+def map():
+    return render_template('map.html', GOOGLE_API_KEY=constants.GOOGLE_API_KEY)
 
 
 @api.route("/flash")
