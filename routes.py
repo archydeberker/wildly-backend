@@ -28,10 +28,6 @@ def register():
 def index():
     return render_template('base.html')
 
-@api.route("/map")
-def map():
-    return render_template('map.html', GOOGLE_API_KEY=constants.GOOGLE_API_KEY)
-
 
 @api.route("/flash")
 def test_flash():

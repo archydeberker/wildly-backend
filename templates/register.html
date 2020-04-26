@@ -28,7 +28,7 @@
                     </div>
                     <div class="field">
                         <p class="control has-icons-left has-icons-right">
-                            <input required id={{ form.postcode.id }} class="input" name="postcode" type="text"
+                            <input required id="postcode" class="input" name="postcode" type="text"
                                    placeholder="Location">
                             <span class="icon is-small is-left">
                     <i class="fas fa-map-marker"></i>
@@ -99,7 +99,7 @@
 
                             <div class="field">
                                 <p class="control has-icons-left has-icons-right">
-                                    <input required id='postcode' class="input" name="postcode" type="text"
+                                    <input required id="postcode2" class="input" name="postcode" type="text"
                                            placeholder="Postcode">
                                     <span class="icon is-small is-left">
                     <i class="fas fa-map-marker"></i>
@@ -122,9 +122,13 @@
       // parameter when you first load the API. For example:
       // <script src="https://maps.googleapis.com/maps/api/js?key=YOURAPIKEY&libraries=places">
 
-      function initMap() {
-
-        var input = document.getElementById('postcode');
+      function autoComplete(){
+      initMap('postcode')
+      initMap('postcode2')
+      }
+      function initMap(id) {
+        console.log(id)
+        var input = document.getElementById(id);
         var strictBounds = document.getElementById('strict-bounds-selector');
 
         var autocomplete = new google.maps.places.Autocomplete(input);
@@ -162,7 +166,7 @@
 
       }
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key={{GOOGLE_API_KEY}}&libraries=places&callback=initMap"
+    <script src="https://maps.googleapis.com/maps/api/js?key={{GOOGLE_API_KEY}}&libraries=places&callback=autoComplete"
         async defer></script>
 
 {% endblock %}
