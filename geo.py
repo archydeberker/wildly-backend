@@ -11,30 +11,15 @@ def call_timezone_api(lat, lon):
     return response.json()
 
 
-def call_geocoding_api_generic(place):
+def call_geocoding_api(place):
     req = f"https://maps.googleapis.com/maps/api/geocode/json?address={place}&key={GOOGLE_API_KEY}"
     response = requests.get(req)
     print(response.json())
     return response.json()
 
 
-def call_geocoding_api(postcode):
-    req = f"https://maps.googleapis.com/maps/api/geocode/json?components=postal_code:{postcode}&key={GOOGLE_API_KEY}"
-    response = requests.get(req)
-    print(response.json())
-    return response.json()
-
-
 def get_lat_lon_for_place(place: str):
-    response = call_geocoding_api_generic(place)
-    location = response['results'][0]['geometry']['location']
-    lat, lon = location['lat'], location['lng']
-
-    return lat, lon
-
-
-def get_lat_lon_for_postcode(postcode: str):
-    response = call_geocoding_api(postcode)
+    response = call_geocoding_api(place)
     location = response['results'][0]['geometry']['location']
     lat, lon = location['lat'], location['lng']
 
@@ -47,7 +32,7 @@ def get_timezone_for_lat_lon(lat: str, lon: str):
 
 
 if __name__ == '__main__':
-    lat, lon = get_lat_lon_for_postcode('BS6 7EL')
+    lat, lon = get_lat_lon_for_place('Redland, Bristol, UK')
     resp = call_timezone_api(lat, lon)
 
     print(resp)

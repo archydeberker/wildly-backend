@@ -56,11 +56,11 @@ class TestLocation:
     lat: float
 
 
-test_locations = [TestLocation(place='BS6 7ER',
+test_locations = [TestLocation(place='Redland, Bristol, UK',
                                city='Bristol',
                                lat=51.45,
                                lon=-2.58),
-                  TestLocation(place='H2S 3C2',
+                  TestLocation(place='Montreal, QC, Canada',
                                city='Montreal',
                                lat=45.5,
                                lon=-73.6)]
