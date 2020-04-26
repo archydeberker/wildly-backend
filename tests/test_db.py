@@ -95,5 +95,5 @@ class TestForecast:
     # @pytest.mark.parametrize('location', test_locations)
     def test_addition_of_forecast_to_db(self):
 
-        location = actions.get_location_by_postcode(postcode=self.location.postcode)
+        location = actions.get_location_by_place(postcode=self.location.postcode)
         actions.add_tomorrows_forecast_to_db(location)

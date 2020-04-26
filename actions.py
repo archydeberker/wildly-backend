@@ -8,11 +8,10 @@ import models
 import weather
 import geo
 import auth
-from data import normalize_postcode
 
 from flask_mail import Mail
 
-from auth import compose_verifiation_email
+from auth import compose_verification_email
 
 mail = Mail()
 
@@ -42,15 +41,14 @@ def add_tomorrows_forecast_to_db(location: models.Location):
     models.db.session.commit()
 
 
-def register_new_user(email: str, postcode: str):
-    # postcode = normalize_postcode(postcode)
-    location = add_or_return_location(postcode)
+def register_new_user(email: str, place: str):
+    location = add_or_return_location(place)
     user = add_or_return_user(email, location)
 
-    html = compose_verifiation_email(email)
+    html = compose_verification_email(email)
 
     auth.send_verification_email(email, 'Please confirm your email for Weather Window', html, mail)
-    print(f'Sent a verification email to {email} for {postcode}')
+    print(f'Sent a verification email to {email} for {place}')
     return user
 
 
@@ -60,20 +58,20 @@ def retrieve_location_for_user(user: dict):
     return models.Location.query.filter_by(id=user_row.location.id).first()
 
 
-def add_or_return_location(postcode: str):
+def add_or_return_location(place: str):
 
-    location_row = get_location_by_postcode(postcode)
+    location_row = get_location_by_place(place)
     if location_row is None:
-        location = dict(postcode=postcode)
-        location['latitude'], location['longitude'] = geo.get_lat_lon_for_place(location['postcode'])
+        location = dict(place=place)
+        location['latitude'], location['longitude'] = geo.get_lat_lon_for_place(location['place'])
         location_row = models.Location(**location)
         models.db.session.add(location_row)
 
     return location_row
 
 
-def get_location_by_postcode(postcode: str):
-    return models.Location.query.filter_by(postcode=postcode).first()
+def get_location_by_place(place: str):
+    return models.Location.query.filter_by(place=place).first()
 
 
 def get_user(email: str):

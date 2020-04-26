@@ -26,7 +26,7 @@ def send_verification_email(to, subject, template, mail):
     mail.send(msg)
 
 
-def compose_verifiation_email(email: str):
+def compose_verification_email(email: str):
     token = generate_confirmation_token(email)
     confirm_url = url_for('api.confirm_email', token=token, _external=True)
     html = render_template('activate.html', confirm_url=confirm_url)

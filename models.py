@@ -32,7 +32,7 @@ class User(db.Model):
 
 class Location(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    postcode = db.Column(db.String(10), nullable=False, unique=True)
+    place = db.Column(db.String(10), nullable=False, unique=True)
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
     google_ref = db.Column(db.String(1000))
