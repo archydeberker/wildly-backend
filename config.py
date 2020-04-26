@@ -1,5 +1,7 @@
 import os
 
+file_path = os.path.abspath(os.getcwd())
+
 
 class Config(object):
     SECRET_KEY = os.environ.get('TOKEN_SECRET_KEY')
@@ -21,3 +23,7 @@ class Config(object):
     # mail accounts
     MAIL_DEFAULT_SENDER = 'weatherwindowapp@gmail.com'
 
+
+class TestConfig(Config):
+    db_filepath = os.path.join(file_path, "test_db.sqlite")
+    SQLALCHEMY_DATABASE_URI = f"sqlite:///tests/test_db.sqlite"

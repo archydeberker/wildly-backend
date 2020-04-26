@@ -4,7 +4,7 @@ import weather
 import cal
 import geo
 from actions import filter_users_who_already_have_invites_for_today
-from app import create_app
+from app_factory import create_app
 from cal import get_calendar_event
 
 

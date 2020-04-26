@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 
 import actions
 import models
-from app import db
+from models import db
 from tests.fixtures import test_db, setup_test_app, test_locations
 
 
@@ -20,7 +20,7 @@ class TestUser:
     @pytest.mark.runfirst
     def test_add_new_user(self, test_db):
 
-        user = dict(email="tmp@gmail.com", location=actions.add_or_return_location(self.location.postcode))
+        user = dict(email="tmp@gmail.com", location=actions.add_or_return_location(self.location.place))
 
         new_user = models.User(**user)
 
@@ -39,7 +39,7 @@ class TestUser:
 
     def test_retrieval_of_location(self, test_db):
         location = actions.retrieve_location_for_user(dict(email='tmp@gmail.com'))
-        assert location.postcode == self.location.postcode
+        assert location.place == self.location.place
 
     def test_setting_of_verified(self, test_db):
         user = actions.add_or_return_user(email='tmp@gmail.com')
@@ -52,7 +52,7 @@ class TestLocation:
     @pytest.mark.runfirst
     def test_add_new_location(self, test_db):
         new_location = models.Location(
-            postcode="ABC DEF",
+            place="London UK",
             latitude=43.8054,
             longitude=-71.8126,
         )
@@ -63,7 +63,7 @@ class TestLocation:
     def test_list_locations(self, test_db):
         all_locations = models.Location.query.all()
         assert len(all_locations) == 2  # We add one in the User class above
-        assert all_locations[-1].postcode == "ABC DEF"
+        assert all_locations[-1].place == "London UK"
 
     def test_retrieve_users_for_locations(self, test_db):
         location = models.Location.query.first()
@@ -93,7 +93,7 @@ class TestForecast:
         assert len(u.location.forecasts) == 1
 
     # @pytest.mark.parametrize('location', test_locations)
-    def test_addition_of_forecast_to_db(self):
+    def test_addition_of_forecast_to_db(self, test_db):
 
-        location = actions.get_location_by_place(postcode=self.location.postcode)
+        location = actions.get_location_by_place(place=self.location.place)
         actions.add_tomorrows_forecast_to_db(location)
