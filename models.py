@@ -27,7 +27,7 @@ class User(db.Model):
         return {'email': self.email,
                 'id': self.id,
                 'verified': self.email_verified,
-                'postcode': self.location.postcode}
+                'place': self.location.place}
 
 
 class Location(db.Model):
@@ -42,7 +42,7 @@ class Location(db.Model):
     users = db.relationship('User', backref='location', lazy=True)
 
     def __repr__(self):
-        return f"<Location {self.postcode}>"
+        return f"<Location {self.place}>"
 
 
 class Forecast(db.Model):
