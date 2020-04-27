@@ -42,6 +42,7 @@ def add_tomorrows_forecast_to_db(location: models.Location):
 
 
 def register_new_user(email: str, place: str):
+    print(f"Received new user signup for {email} and {place}")
     location = add_or_return_location(place)
     user = add_or_return_user(email, location)
 
