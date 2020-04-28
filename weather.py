@@ -110,7 +110,7 @@ class WeatherWindowFinder:
 
 
 if __name__ == "__main__":
-    location = dict(postcode="Rumney NH", latitude=45.5017, longitude=-73.5673)
+    location = dict(place="Rumney NH", latitude=45.5017, longitude=-73.5673)
     forecast = DarkSky()
     df = forecast.get_forecast_tomorrow(location['longitude'], location['latitude'])
 

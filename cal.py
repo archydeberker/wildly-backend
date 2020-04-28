@@ -97,8 +97,8 @@ class Calendar:
 
 
 def get_calendar_event(location, window, attendees, timezone):
-    return Event(location=location.postcode,
-                 summary=f" 🌞 Your weather window in {location.postcode}",
+    return Event(location=location.place,
+                 summary=f" 🌞 Your weather window in {location.place}",
                  description=f"It's going to be {window.summary}, "
                              f"with a probability of rain of "
                              f"{window.precip_probability} and feeling like "
