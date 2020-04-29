@@ -2,12 +2,16 @@ from __future__ import print_function
 import datetime
 import pickle
 from dataclasses import dataclass
+from typing import List
 
+import pandas as pd
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
 import constants
+import models
+from models import User
 
 credentials_path = constants.GOOGLE_CREDENTIALS_PATH
 token_path = constants.GOOGLE_TOKEN_PATH
@@ -96,7 +100,7 @@ class Calendar:
         self.service.events().delete(calendarId='primary', eventId=event_id).execute()
 
 
-def get_calendar_event(location, window, attendees, timezone):
+def get_calendar_event(location: models.Location, window: pd.Series, attendees: List["User.email"], timezone: str):
     return Event(location=location.place,
                  summary=f" 🌞 Your weather window in {location.place}",
                  description=f"It's going to be {window.summary}, "
