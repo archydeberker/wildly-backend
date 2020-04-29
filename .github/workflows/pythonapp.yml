@@ -4,7 +4,6 @@ on: [push]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -17,6 +16,13 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+    - name: Get Credentials from S3
+      id: credentials
+      env:
+        AWS_ACCESS_KEY_ID_WINE: ${{secrets.AWS_ACCESS_KEY_ID_WINE}}
+        AWS_SECRET_ACCESS_KEY_WINE: ${{secrets.AWS_SECRET_ACCESS_KEY_WINE}}
+        GOOGLE_API_KEY: ${{secrets.GOOGLE_API_KEY}}
+        
     - name: Lint with flake8
       run: |
         pip install flake8
@@ -25,6 +31,12 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
+      env:
+        GOOGLE_API_KEY: ${{secrets.GOOGLE_API_KEY}}
+        DARKSKY_API_KEY: ${{secrets.DARKSKY_API_KEY}}
+        WEATHER_WINDOW_MAIL_PASSWORD: ${{secrets.WEATHER_WINDOW_MAIL_PASSWORD}}
+        WEATHER_WINDOW_MAIL_USERNAME: ${{secrets.WEATHER_WINDOW_MAIL_USERNAME}}
+        TOKEN_SECRET_KEY: ${{secrets.TOKEN_SECRET_KEY}}
       run: |
         pip install pytest
         pytest
