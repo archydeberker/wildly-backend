@@ -17,7 +17,6 @@ class TestUser:
 
     location = test_locations[0]
 
-    @pytest.mark.runfirst
     def test_add_new_user(self, test_db):
 
         user = dict(email="tmp@gmail.com", location=actions.add_or_return_location(self.location.place))

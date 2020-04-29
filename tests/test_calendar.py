@@ -44,7 +44,6 @@ def test_event():
 
 class TestCalendar:
 
-    @pytest.mark.run_first
     def test_authentication(self, calendar_client):
         assert calendar_client.authenticated is True
 

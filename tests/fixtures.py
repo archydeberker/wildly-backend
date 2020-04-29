@@ -49,7 +49,7 @@ def example_forecast():
 
 
 @dataclass
-class TestLocation:
+class MockLocation:
     place: str
     country: str
     city: str
@@ -57,12 +57,12 @@ class TestLocation:
     lat: float
 
 
-test_locations = [TestLocation(place='Redland, Bristol, UK',
+test_locations = [MockLocation(place='Redland, Bristol, UK',
                                city='Bristol',
                                country='England',
                                lat=51.45,
                                lon=-2.58),
-                  TestLocation(place='Montreal, QC, Canada',
+                  MockLocation(place='Montreal, QC, Canada',
                                city='Montreal',
                                country='Canada',
                                lat=45.5,
