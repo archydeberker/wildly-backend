@@ -48,7 +48,7 @@ class TestUser:
         assert user.email_verified is True
 
 
-class TestLocation:
+class TestLocations:
     @pytest.mark.runfirst
     def test_add_new_location(self, test_db):
         new_location = models.Location(
@@ -70,7 +70,7 @@ class TestLocation:
         assert isinstance(location.users, list)
 
 
-class TestForecast:
+class TestForecasst:
     location = test_locations[0]
     @pytest.mark.runfirst
     def test_add_new_forecast(self, test_db):

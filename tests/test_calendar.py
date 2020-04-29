@@ -3,8 +3,7 @@ import datetime
 import pytest
 
 import geo
-from cal import Calendar, Event, get_calendar_event
-from constants import TEST_EMAIL_ACCOUNT
+from cal import Calendar, get_calendar_event
 
 
 @pytest.fixture(scope='module')
@@ -14,15 +13,15 @@ def calendar_client():
 
 
 class TestLocation:
-    postcode = "BS2 7EV"
+    place = "BS2 7EV"
 
 
 class BritishTestLocation:
-    postcode = "BS6 6BP"
+    place = "BS6 6BP"
 
 
 class CanadianTestLocation:
-    postcode = "H2S 3C3"
+    place = "H2S 3C3"
 
 
 class TestWindow:
@@ -58,7 +57,7 @@ class TestCalendar:
 
     def test_event_creation_has_correct_timezone(self, calendar_client, test_event):
 
-        lat, lon = geo.get_lat_lon_for_postcode(BritishTestLocation.postcode)
+        lat, lon = geo.get_lat_lon_for_place(BritishTestLocation.place)
         timezone = geo.get_timezone_for_lat_lon(lat, lon)
 
         e = get_calendar_event(location=TestLocation,
@@ -69,4 +68,4 @@ class TestCalendar:
         assert e.timezone == 'Europe/London'
 
         created_event = calendar_client.create_event(e)
-        assert created_event['start']['timezone'] == 'Europe/London'
+        assert created_event['start']['timeZone'] == 'Europe/London'

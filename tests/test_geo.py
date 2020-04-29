@@ -7,7 +7,7 @@ import pytest
 @pytest.mark.parametrize('location', test_locations)
 def test_geocoding_returns_correct_city(location: TestLocation):
     location_result = geo.call_geocoding_api(location.place)
-    assert location_result['results'][0]['address_components'][3]['long_name'] == location.city
+    assert location_result['results'][0]['address_components'][3]['long_name'] == location.country
 
 
 @pytest.mark.parametrize('location', test_locations)
