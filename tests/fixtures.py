@@ -17,7 +17,10 @@ def setup_test_app():
         yield client, db
 
     print('Removing Test DB')
-    os.remove(TestConfig.db_filepath)  # this is teardown
+    try:
+        os.remove(TestConfig.db_filepath)  # this is teardown
+    except FileNotFoundError:
+        Warning('Did not manage to tear down test DB, hope this was a temporary env')
 
 
 @pytest.fixture(scope='module')
