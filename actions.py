@@ -1,4 +1,5 @@
 import datetime
+from sqlite3 import IntegrityError
 from typing import List
 
 import pandas as pd
@@ -44,13 +45,19 @@ def add_tomorrows_forecast_to_db(location: models.Location):
 def register_new_user(email: str, place: str):
     print(f"Received new user signup for {email} and {place}")
     location = add_or_return_location(place)
-    user = add_or_return_user(email, location)
+    duplicate_user = False
+    user = models.User.query.filter_by(email=email).first()
+    if user is None:
+        user = add_user(email, location)
+    else:
+        duplicate_user = True
 
     html = compose_verification_email(email)
 
     auth.send_verification_email(email, 'Please confirm your email for Weather Window', html, mail)
     print(f'Sent a verification email to {email} for {place}')
-    return user
+
+    return user, duplicate_user
 
 
 def retrieve_location_for_user(user: dict):
@@ -79,14 +86,19 @@ def get_user(email: str):
     return models.User.query.filter_by(email=email).first()
 
 
+def add_user(email: str, location: models.Location):
+    user_row = models.User(email=email, location=location)
+    models.db.session.add(user_row)
+    models.db.session.commit()
+    return user_row
+
+
 def add_or_return_user(email: str, location: models.Location = None):
 
     user_row = models.User.query.filter_by(email=email).first()
     if user_row is None:
         if location is not None:
-            user_row = models.User(email=email, location=location)
-            models.db.session.add(user_row)
-            models.db.session.commit()
+           add_user(email, location)
         else:
             raise ValueError('User not found and no location specified')
 
@@ -108,7 +120,7 @@ def update_most_recent_invite(users: List[models.User]):
     models.db.session.commit()
 
 
-def send_tomorrow_window_to_user(user: models.User  , host: str = 'localhost'):
+def send_tomorrow_window_to_user(user: models.User, host: str = 'localhost'):
     calendar = cal.Calendar(host=host)
     finder = weather.WeatherWindowFinder()
 
@@ -130,7 +142,7 @@ def send_tomorrow_window_to_user(user: models.User  , host: str = 'localhost'):
 
     # Generate the calendar invite
     timezone = geo.get_timezone_for_lat_lon(location.latitude, location.longitude)
-    event = cal.get_calendar_event(location, window, attendees=[user], timezone=timezone)
+    event = cal.get_calendar_event(location, window, attendees=[user.email], timezone=timezone)
 
     calendar.create_event(event)
     update_most_recent_invite([user])

@@ -1,4 +1,5 @@
 from smtplib import SMTPRecipientsRefused
+from sqlite3 import IntegrityError
 
 import flask
 from flask import Blueprint, jsonify, request, render_template, flash, redirect, url_for
@@ -15,12 +16,16 @@ def register():
     form = RegisterForm()
     if form.validate_on_submit():
         try:
-            actions.register_new_user(form.email.data, form.postcode.data)
-            flash(f"We've sent a confirmation email to {form.email.data}, please check your inbox!")
+            _, duplicate_user = actions.register_new_user(form.email.data, form.postcode.data)
+            if duplicate_user:
+                flash(f" We seem to have you registered already, but we've resent your confirmation email!")
+            else:
+                flash(f"We've sent a confirmation email to {form.email.data}, please check your inbox!")
         except SMTPRecipientsRefused:
             flash(f"We couldn't send an email to {form.email.data}, please check and try again!", category="warning")
         except IndexError:
             flash(f" We couldn't find a location for {form.postcode.data}, please check and try again!")
+
     return render_template('register.html', title='Weather Window', form=form, GOOGLE_API_KEY=constants.GOOGLE_API_KEY)
 
 
