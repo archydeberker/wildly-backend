@@ -18,7 +18,7 @@ jobs:
         pip install -r requirements.txt
 
     - name: Set Python path
-      run: echo "::set-env name=PYTHONPATH::home/runner/work/wildly-backend"
+      run: echo "::set-env name=PYTHONPATH::."
   
     - name: Get Credentials from S3
       id: credentials
