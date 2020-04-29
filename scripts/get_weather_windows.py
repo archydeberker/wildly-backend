@@ -6,6 +6,7 @@ import geo
 from actions import filter_users_who_already_have_invites_for_today
 from app_factory import create_app
 from cal import get_calendar_event
+from scripts import get_credentials_from_s3
 
 
 def main():
@@ -41,7 +42,7 @@ def main():
 
 
 if __name__ == '__main__':
-
+    get_credentials_from_s3.main()
     app = create_app()
     app.app_context().push()
 
