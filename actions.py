@@ -86,6 +86,13 @@ def get_user(email: str):
     return models.User.query.filter_by(email=email).first()
 
 
+def delete_user(email: str):
+    user = get_user(email)
+    models.db.session.delete(user)
+    print(f'Deleting user {email}')
+    models.db.session.commit()
+
+
 def add_user(email: str, location: models.Location):
     user_row = models.User(email=email, location=location)
     models.db.session.add(user_row)

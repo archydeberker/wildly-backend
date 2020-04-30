@@ -3,6 +3,8 @@ from sqlite3 import IntegrityError
 
 import flask
 from flask import Blueprint, jsonify, request, render_template, flash, redirect, url_for
+from itsdangerous import BadSignature
+
 from forms import RegisterForm
 import actions
 import constants
@@ -59,6 +61,24 @@ def confirm_email(token):
         actions.send_tomorrow_window_to_user(user=user)
         flash('Email confirmed, thanks! Check your calendar, you should have an invite for tomorrow!', 'success')
 
+    return redirect(url_for('api.index'))
+
+
+@api.route("/unsubscribe/<token>")
+def unsubscribe(token):
+    try:
+        email = auth.decode_token_to_email(token)
+        if email is None:
+            flash('This unsubscribe link is invalid! Please try again', 'danger')
+        else:
+            print(f"Unsubscribe confirmed for user {email}")
+            actions.delete_user(email)
+
+            flash("You've been unsubscribed. Starting tomorrow, you won't receive new invites.", 'success')
+
+    except BadSignature:
+        pass
+    
     return redirect(url_for('api.index'))
 
 

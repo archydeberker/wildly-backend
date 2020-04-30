@@ -46,6 +46,15 @@ class TestUser:
         actions.set_email_verified(user)
         assert user.email_verified is True
 
+    def test_user_deletion(self, test_db):
+        actions.delete_user(email='tmp@gmail.com')
+        all_users = models.User.query.all()
+        assert len(all_users) == 0
+
+        # Add back the user
+        actions.add_or_return_user(email='tmp@gmail.com',
+                                   location=actions.add_or_return_location(self.location.place))
+
 
 class TestLocations:
     @pytest.mark.runfirst
