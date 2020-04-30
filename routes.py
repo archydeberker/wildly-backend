@@ -55,6 +55,8 @@ def confirm_email(token):
     else:
         print(f"Email confirmed for user {email}")
         user = actions.get_user(email)
+        if user is None:
+            flash('Uho, you were already unsubscribed! Please subscribe again')
         actions.set_email_verified(user_row=user)
         # TODO: we can do this async, move it to a cron job
 
@@ -64,7 +66,7 @@ def confirm_email(token):
     return redirect(url_for('api.index'))
 
 
-@api.route("/unsubscribe/<token>")
+@api.route("/unsubscribe/<token>", methods=["GET", "POST"])
 def unsubscribe(token):
     try:
         email = auth.decode_token_to_email(token)
@@ -77,8 +79,8 @@ def unsubscribe(token):
             flash("You've been unsubscribed. Starting tomorrow, you won't receive new invites.", 'success')
 
     except BadSignature:
-        pass
-    
+        print('Bad signature error')
+
     return redirect(url_for('api.index'))
 
 
