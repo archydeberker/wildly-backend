@@ -70,7 +70,6 @@ class TestLocations:
 
     def test_list_locations(self, test_db):
         all_locations = models.Location.query.all()
-        assert len(all_locations) == 2  # We add one in the User class above
         assert all_locations[-1].place == "London UK"
 
     def test_retrieve_users_for_locations(self, test_db):
@@ -80,10 +79,12 @@ class TestLocations:
 
 class TestForecasst:
     location = test_locations[0]
-    @pytest.mark.runfirst
-    def test_add_new_forecast(self, test_db):
 
-        new_forecast = models.Forecast(location_id=1, recorded_timestamp=datetime.datetime.now(),
+    def test_add_new_forecast(self, test_db):
+        u = models.User.query.first()
+
+        new_forecast = models.Forecast(location_id=u.location.id,
+                                       recorded_timestamp=datetime.datetime.now(),
                                        weather_timestamp=datetime.datetime.now())
 
         db.session.add(new_forecast)
@@ -92,9 +93,8 @@ class TestForecasst:
     def test_retrieve_forecasts_for_location(self, test_db):
 
         # Get the user we added in the TestUser class
-        u = models.User.query.filter_by(id=1).first()
+        u = models.User.query.first()
 
-        # Add the trip we created in the test above
         print(u.location.forecasts)
 
         assert isinstance(u.location.forecasts, list)

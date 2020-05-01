@@ -9,7 +9,7 @@ def test_app_runs(test_client):
     assert response.data == b'pong'
 
 
-def test_unsub(test_client, test_db):
+def test_unsubscribe(test_client, test_db):
     test_email = 'test@email.com'
     new_user = actions.add_user(test_email,
                                 location=actions.add_or_return_location('Montreal, Canada'))
@@ -17,7 +17,9 @@ def test_unsub(test_client, test_db):
 
     response = test_client.get(f'unsubscribe/{token}')
 
-    print(response)
+    assert response.status_code == 302
+    #TODO better testing of this
+
 
 # TODO figure out mocking of forms and test the other routes here
 
