@@ -39,8 +39,8 @@ def unsubscribe_page():
             email = form.email.data
             actions.send_unsubscribe_email(email)
             flash(f"Unsubscribe email sent to {email}")
-        except:
-            flash(f"There was a problem sending your unsubscribe email, please check and try again")
+        except ValueError:
+            flash(f"We couldn't find that user, have you already unsubscribed?")
 
     return render_template('unsubscribe.html', form=form)
 
