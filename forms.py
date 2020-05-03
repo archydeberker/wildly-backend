@@ -9,6 +9,11 @@ class RegisterForm(FlaskForm):
     submit = SubmitField('Register')
 
 
+class UnsubscribeForm(FlaskForm):
+    email = StringField('Email Address', validators=[DataRequired()])
+    submit = SubmitField('Unsubscribe')
+
+
 if __name__ == '__main__':
 
     form = RegisterForm()

@@ -7,7 +7,8 @@
         </p>
 
         <p> Enter you email below and we'll send you a link to unsubscribe </p><br>
-
+        <form action="" method="post" novalidate>
+            {{ form.hidden_tag() }}
             <div class="field is-horizontal">
                 <div class="field-body">
                     <div class="field">
@@ -20,7 +21,7 @@
                 </div>
                 <input class="button is-primary" type="submit" value="Unsubscribe" style="margin-left:10px"/>
             </div>
-        </div>
+        </form>
     </div>
 </section>
 {% endblock %}

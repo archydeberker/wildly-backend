@@ -15,7 +15,7 @@ def decode_token_to_email(token, serializer=DEFAULT_SERIALIZER):
     return email
 
 
-def send_verification_email(to, subject, template, mail):
+def send_email(to, subject, template, mail):
     msg = Message(subject,
                   recipients=[to],
                   html=template,
@@ -29,4 +29,11 @@ def compose_verification_email(email: str):
     confirm_url = url_for('api.confirm_email', token=token, _external=True)
     unsubscribe_url = url_for('api.unsubscribe', token=token, _external=True)
     html = render_template('activate.html', confirm_url=confirm_url, unsub_url=unsubscribe_url)
+    return html
+
+
+def compose_unsubscribe_email(email: str):
+    token = generate_confirmation_token(email)
+    unsubscribe_url = url_for('api.unsubscribe', token=token, _external=True)
+    html = render_template('unsub_email.html', unsub_url=unsubscribe_url)
     return html

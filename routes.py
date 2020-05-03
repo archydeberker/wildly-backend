@@ -5,7 +5,7 @@ import flask
 from flask import Blueprint, jsonify, request, render_template, flash, redirect, url_for
 from itsdangerous import BadSignature
 
-from forms import RegisterForm
+from forms import RegisterForm, UnsubscribeForm
 import actions
 import constants
 import auth
@@ -29,6 +29,20 @@ def register():
             flash(f" We couldn't find a location for {form.postcode.data}, please check and try again!")
 
     return render_template('register.html', title='Weather Window', form=form, GOOGLE_API_KEY=constants.GOOGLE_API_KEY)
+
+
+@api.route("/unsubscribe", methods=["GET", "POST"])
+def unsubscribe_page():
+    form = UnsubscribeForm()
+    if form.validate_on_submit():
+        try:
+            email = form.email.data
+            actions.send_unsubscribe_email(email)
+            flash(f"Unsubscribe email sent to {email}")
+        except:
+            flash(f"There was a problem sending your unsubscribe email, please check and try again")
+
+    return render_template('unsubscribe.html', form=form)
 
 
 @api.route("/")
@@ -83,11 +97,6 @@ def unsubscribe(token):
 
     return redirect(url_for('api.index'))
 
-
-@api.route("/unsubscribe", methods=["GET", "POST"])
-def unsubscribe_page():
-
-    return render_template(('unsubscribe.html'))
 
 @api.route('/google79a68bb5bf16f86a.html')
 def google_verification():

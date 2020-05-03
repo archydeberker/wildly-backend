@@ -54,10 +54,19 @@ def register_new_user(email: str, place: str):
 
     html = compose_verification_email(email)
 
-    auth.send_verification_email(email, 'Please confirm your email for Weather Window', html, mail)
+    auth.send_email(email, 'Please confirm your email for Weather Window', html, mail)
     print(f'Sent a verification email to {email} for {place}')
 
     return user, duplicate_user
+
+
+def send_unsubscribe_email(email: str):
+    user = get_user(email)
+    if user:
+        html = auth.compose_unsubscribe_email(email)
+        auth.send_email(email, 'Unsubscribe from Weather Window', html, mail)
+    else:
+        raise ValueError
 
 
 def retrieve_location_for_user(user: dict):
