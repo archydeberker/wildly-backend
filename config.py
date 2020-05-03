@@ -1,10 +1,12 @@
 import os
 
+import constants
+
 file_path = os.path.abspath(os.getcwd())
 
 
 class Config(object):
-    SECRET_KEY = os.environ.get('TOKEN_SECRET_KEY')
+    SECRET_KEY = constants.SECRET_KEY
     SQLALCHEMY_DATABASE_URI = os.environ.get(
         "DATABASE_URL", "sqlite:///db.sqlite"
     )

@@ -3,7 +3,9 @@ from sqlite3 import IntegrityError
 
 import flask
 from flask import Blueprint, jsonify, request, render_template, flash, redirect, url_for
-from forms import RegisterForm
+from itsdangerous import BadSignature
+
+from forms import RegisterForm, UnsubscribeForm
 import actions
 import constants
 import auth
@@ -27,6 +29,20 @@ def register():
             flash(f" We couldn't find a location for {form.postcode.data}, please check and try again!")
 
     return render_template('register.html', title='Weather Window', form=form, GOOGLE_API_KEY=constants.GOOGLE_API_KEY)
+
+
+@api.route("/unsubscribe", methods=["GET", "POST"])
+def unsubscribe_page():
+    form = UnsubscribeForm()
+    if form.validate_on_submit():
+        try:
+            email = form.email.data
+            actions.send_unsubscribe_email(email)
+            flash(f"Unsubscribe email sent to {email}")
+        except ValueError:
+            flash(f"We couldn't find that user, have you already unsubscribed?")
+
+    return render_template('unsubscribe.html', form=form)
 
 
 @api.route("/")
@@ -53,11 +69,31 @@ def confirm_email(token):
     else:
         print(f"Email confirmed for user {email}")
         user = actions.get_user(email)
+        if user is None:
+            flash('Uho, you were already unsubscribed! Please subscribe again')
         actions.set_email_verified(user_row=user)
         # TODO: we can do this async, move it to a cron job
 
         actions.send_tomorrow_window_to_user(user=user)
         flash('Email confirmed, thanks! Check your calendar, you should have an invite for tomorrow!', 'success')
+
+    return redirect(url_for('api.index'))
+
+
+@api.route("/unsubscribe/<token>", methods=["GET", "POST"])
+def unsubscribe(token):
+    try:
+        email = auth.decode_token_to_email(token)
+        if email is None:
+            flash('This unsubscribe link is invalid! Please try again', 'danger')
+        else:
+            print(f"Unsubscribe confirmed for user {email}")
+            actions.delete_user(email)
+
+            flash("You've been unsubscribed. Starting tomorrow, you won't receive new invites.", 'success')
+
+    except BadSignature:
+        print('Bad signature error')
 
     return redirect(url_for('api.index'))
 

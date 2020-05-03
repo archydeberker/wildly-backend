@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero section" style="width:100%; padding-bottom:6%; padding-top:2%">
+    <div class="container has-background-white is-rounded" style="border-radius: 20px; padding: 20px">
+        <p class="title">
+            Gee, we're sorry to see you go
+        </p>
+
+        <p> Enter you email below and we'll send you a link to unsubscribe </p><br>
+        <form action="" method="post" novalidate>
+            {{ form.hidden_tag() }}
+            <div class="field is-horizontal">
+                <div class="field-body">
+                    <div class="field">
+                        <p class="control has-icons-left has-icons-right">
+                            <input required id='email' class="input" name="email" type="email">
+                            <span class="icon is-small is-left">
+                    <i class="fas fa-envelope"></i>
+                    </span>
+                    </div>
+                </div>
+                <input class="button is-primary" type="submit" value="Unsubscribe" style="margin-left:10px"/>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}
