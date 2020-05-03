@@ -84,6 +84,11 @@ def unsubscribe(token):
     return redirect(url_for('api.index'))
 
 
+@api.route("/unsubscribe", methods=["GET", "POST"])
+def unsubscribe_page():
+
+    return render_template(('unsubscribe.html'))
+
 @api.route('/google79a68bb5bf16f86a.html')
 def google_verification():
     return render_template('google.html')
