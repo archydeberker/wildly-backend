@@ -29,6 +29,7 @@ class TestWindow:
     precip_probability = 0.2
     apparent_temperature = 0.3
     weather_timestamp = datetime.datetime.now()
+    icon = 'cloudy'
 
 
 @pytest.fixture(scope='module')
@@ -52,7 +53,7 @@ class TestCalendar:
         assert created_event['status'] == 'confirmed'
 
         # And teardown: delete the event again
-        deleted_event = calendar_client.delete_event(created_event['id'])
+        # deleted_event = calendar_client.delete_event(created_event['id'])
 
     def test_event_creation_has_correct_timezone(self, calendar_client, test_event):
 
