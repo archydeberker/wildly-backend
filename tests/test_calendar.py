@@ -53,7 +53,7 @@ class TestCalendar:
         assert created_event['status'] == 'confirmed'
 
         # And teardown: delete the event again
-        # deleted_event = calendar_client.delete_event(created_event['id'])
+        deleted_event = calendar_client.delete_event(created_event['id'])
 
     def test_event_creation_has_correct_timezone(self, calendar_client, test_event):
 
