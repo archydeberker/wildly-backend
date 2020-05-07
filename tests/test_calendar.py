@@ -29,6 +29,7 @@ class TestWindow:
     precip_probability = 0.2
     apparent_temperature = 0.3
     weather_timestamp = datetime.datetime.now()
+    icon = 'cloudy'
 
 
 @pytest.fixture(scope='module')
