@@ -21,13 +21,13 @@ GOOGLE_TOKEN_PATH = root / 'token.pickle'
 
 WEATHER_EMOJI_MAPPING = {
     'clear-day': "🌞",
-    'clear-night': "🌕",
+    'clear-night': "🌞",
     'rain': "🌧",
     'snow': "🌨",
     'sleet': "🌨",
     'wind': "🌬",
     'fog': "🌫",
-    'cloudy': "☁",
+    'cloudy': "☁️",
     'partly-cloudy-day': "⛅",
     'or partly-cloudy-night': "⛅"
 }
