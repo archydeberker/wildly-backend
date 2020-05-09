@@ -16,7 +16,8 @@ api = Blueprint("api", __name__)
 @api.route("/", methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
-    if form.validate_on_submit():
+    if request.method == 'POST':
+        print(form.errors)
         try:
             _, duplicate_user = actions.register_new_user(form.email.data, form.postcode.data)
             if duplicate_user:
@@ -24,9 +25,15 @@ def register():
             else:
                 flash(f"We've sent a confirmation email to {form.email.data}, please check your inbox!")
         except SMTPRecipientsRefused:
-            flash(f"We couldn't send an email to {form.email.data}, please check and try again!", category="warning")
+            if not form.email.data:
+                flash(f"Did you forget to enter an email?")
+            else:
+                flash(f"We couldn't send an email to {form.email.data}, please check and try again!", category="warning")
         except IndexError:
-            flash(f" We couldn't find a location for {form.postcode.data}, please check and try again!")
+            if not form.postcode.data:
+                flash(f"Did you forget to enter a location?")
+            else:
+                flash(f" We couldn't find a location for {form.postcode.data}, please check and try again!")
 
     return render_template('register.html', title='Weather Window', form=form, GOOGLE_API_KEY=constants.GOOGLE_API_KEY)
 
