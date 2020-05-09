@@ -15,32 +15,34 @@
             {{ form.hidden_tag() }}
 
             <div class="field is-horizontal">
+
                 <div class="field-body">
                     <div class="field">
                         <p class="control has-icons-left has-icons-right">
                             <input required id={{ form.email.id }} class="input" name="email" type="email"
-                                   placeholder="Email">
+                                   placeholder="Your email address">
                             <span class="icon is-small is-left">
                     <i class="fas fa-envelope"></i>
                     </span>
                         </p>
-                        <p class="help has-text-white">We'll send a calendar invite each day</p>
                     </div>
                     <div class="field">
                         <p class="control has-icons-left has-icons-right">
                             <input required id="postcode" class="input" name="postcode" type="text"
-                                   placeholder="Location">
+                                   placeholder="Your neighbourhood">
                             <span class="icon is-small is-left">
                     <i class="fas fa-map-marker"></i>
                     </span>
                         </p>
-                        <p class="help has-text-white">with the best weather for this location</p>
                     </div>
                     <div class="field">
                         <input class="button is-primary" type="submit" value="Register"/>
                     </div>
                 </div>
             </div>
+                        <div>
+            <p class="help has-text-white"> Enter email your email to receive  daily calendar invites for the best weather  in your area. You can <a href="/unsubscribe" class="has-text-white is-underlined" style="text-decoration: underline"> unsubscribe </a> at any time! </p>
+                </div>
         </form>
     </div>
 </section>
