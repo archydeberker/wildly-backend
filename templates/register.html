@@ -15,32 +15,34 @@
             {{ form.hidden_tag() }}
 
             <div class="field is-horizontal">
+
                 <div class="field-body">
                     <div class="field">
                         <p class="control has-icons-left has-icons-right">
                             <input required id={{ form.email.id }} class="input" name="email" type="email"
-                                   placeholder="Email">
+                                   placeholder="Your email address">
                             <span class="icon is-small is-left">
                     <i class="fas fa-envelope"></i>
                     </span>
                         </p>
-                        <p class="help has-text-white">We'll send a calendar invite each day</p>
                     </div>
                     <div class="field">
                         <p class="control has-icons-left has-icons-right">
                             <input required id="postcode" class="input" name="postcode" type="text"
-                                   placeholder="Location">
+                                   placeholder="Your neighbourhood">
                             <span class="icon is-small is-left">
                     <i class="fas fa-map-marker"></i>
                     </span>
                         </p>
-                        <p class="help has-text-white">with the best weather for this location</p>
                     </div>
                     <div class="field">
                         <input class="button is-primary" type="submit" value="Register"/>
                     </div>
                 </div>
             </div>
+                        <div>
+            <p class="help has-text-white"> Enter email your email to receive  daily calendar invites for the best weather  in your area. You can <a href="/unsubscribe" class="has-text-white is-underlined" style="text-decoration: underline"> unsubscribe </a> at any time! </p>
+                </div>
         </form>
     </div>
 </section>
@@ -50,21 +52,21 @@
         <div class="columns">
             <div class="column has-text-centered">
                 <figure class="image" style="height:200px">
-                    <img src="/static/assets/images/breaktime-col1.png"
+                    <img src="/static/assets/images/ICON-1.svg"
                          style="width:180px; display: inline-block">
                 </figure>
                 <div class="column">Every day, we look up the weather in your area</div>
             </div>
             <div class="column has-text-centered">
                 <figure class="image" style="height:200px">
-                    <img src="/static/assets/images/breaktime-col2.png"
+                    <img src="/static/assets/images/ICON-2.svg"
                          style="width:180px; display: inline-block">
                 </figure>
                 <div class="column">We send you a calendar invite for the best hour</div>
             </div>
             <div class="column has-text-centered">
                 <figure class="image" style="height:200px">
-                    <img src="/static/assets/images/breaktime-col3.png"
+                    <img src="/static/assets/images/ICON-3.svg"
                          style="width:180px; display: inline-block">
                 </figure>
                 <div class="column">So you can take a break and get some sweet fresh air</div>
@@ -88,7 +90,7 @@
                     <div class="field">
                         <p class="control has-icons-left has-icons-right">
                             <input required id={{ form.email.id }} class="input" name="email" type="email"
-                                   placeholder="Email">
+                                   placeholder="Your email">
                             <span class="icon is-small is-left">
                     <i class="fas fa-envelope"></i>
                     </span>
@@ -100,7 +102,7 @@
                             <div class="field">
                                 <p class="control has-icons-left has-icons-right">
                                     <input required id="postcode2" class="input" name="postcode" type="text"
-                                           placeholder="Location">
+                                           placeholder="Your neighbourhood">
                                     <span class="icon is-small is-left">
                     <i class="fas fa-map-marker"></i>
                     </span>
