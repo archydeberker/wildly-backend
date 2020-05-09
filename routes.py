@@ -13,8 +13,7 @@ import auth
 api = Blueprint("api", __name__)
 
 
-@api.route("/", methods=['GET', 'POST'])
-def register():
+def homepage():
     form = RegisterForm()
     if request.method == 'POST':
         print(form.errors)
@@ -24,11 +23,13 @@ def register():
                 flash(f" We seem to have you registered already, but we've resent your confirmation email!")
             else:
                 flash(f"We've sent a confirmation email to {form.email.data}, please check your inbox!")
+            return redirect(url_for('api.registered'))
         except SMTPRecipientsRefused:
             if not form.email.data:
                 flash(f"Did you forget to enter an email?")
             else:
-                flash(f"We couldn't send an email to {form.email.data}, please check and try again!", category="warning")
+                flash(f"We couldn't send an email to {form.email.data}, please check and try again!",
+                      category="warning")
         except IndexError:
             if not form.postcode.data:
                 flash(f"Did you forget to enter a location?")
@@ -36,6 +37,21 @@ def register():
                 flash(f" We couldn't find a location for {form.postcode.data}, please check and try again!")
 
     return render_template('register.html', title='Weather Window', form=form, GOOGLE_API_KEY=constants.GOOGLE_API_KEY)
+
+
+@api.route("/", methods=['GET', 'POST'])
+def register():
+    return homepage()
+
+
+@api.route("/registered", methods=['GET', 'POST'])
+def registered():
+    return homepage()
+
+
+@api.route("/confirmed", methods=['GET', 'POST'])
+def confirmed():
+    return homepage()
 
 
 @api.route("/unsubscribe", methods=["GET", "POST"])
@@ -84,7 +100,7 @@ def confirm_email(token):
         actions.send_tomorrow_window_to_user(user=user)
         flash('Email confirmed, thanks! Check your calendar, you should have an invite for tomorrow!', 'success')
 
-    return redirect(url_for('api.index'))
+    return redirect(url_for('api.confirmed'))
 
 
 @api.route("/unsubscribe/<token>", methods=["GET", "POST"])
