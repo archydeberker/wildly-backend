@@ -1,3 +1,5 @@
+![GitHub Logo](/static/assets/images/logo-with-backing.png)
+
 # Weather Window
 ![Python application](https://github.com/archydeberker/wildly-backend/workflows/Python%20application/badge.svg?branch=weather-window)
 
