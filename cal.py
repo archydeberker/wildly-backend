@@ -102,7 +102,7 @@ class Calendar:
 
 def get_calendar_event(location: models.Location, window: pd.Series, attendees: List["User.email"], timezone: str):
     return Event(location=location.place,
-                 summary=f" {constants.WEATHER_EMOJI_MAPPING[window.icon]} Your weather window in {location.place}",
+                 summary=f" {constants.WEATHER_EMOJI_MAPPING.get(window.icon, '🌞')} Your weather window in {location.place}",
                  description=f"It's going to be {window.summary}, "
                              f"with a probability of rain of "
                              f"{window.precip_probability} and feeling like "
