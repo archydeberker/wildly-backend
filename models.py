@@ -15,6 +15,7 @@ class User(db.Model):
     email = db.Column(db.String(100), unique=True, nullable=False)
     email_verified = db.Column(db.Boolean, default=False)
     most_recent_invite = db.Column(db.DateTime, nullable=True)
+    registered = db.Column(db.DateTime, nullable=True)
 
     # 1 to 1 relationship (each user has exactly one location)
     location_id = db.Column(db.Integer, db.ForeignKey("location.id"), nullable=False)
@@ -27,6 +28,7 @@ class User(db.Model):
         return {'email': self.email,
                 'id': self.id,
                 'verified': self.email_verified,
+                'registered': self.reg_date,
                 'place': self.location.place}
 
 

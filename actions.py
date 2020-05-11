@@ -103,7 +103,7 @@ def delete_user(email: str):
 
 
 def add_user(email: str, location: models.Location):
-    user_row = models.User(email=email, location=location)
+    user_row = models.User(email=email, location=location, registered=datetime.datetime.now())
     models.db.session.add(user_row)
     models.db.session.commit()
     return user_row

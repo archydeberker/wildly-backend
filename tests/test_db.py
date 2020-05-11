@@ -8,6 +8,8 @@ import models
 from models import db
 from tests.fixtures import test_db, setup_test_app, test_locations
 
+USER_EMAIL = 'tmp@gmail.com'
+
 
 def test_db_creation(test_db):
     assert test_db
@@ -19,7 +21,7 @@ class TestUser:
 
     def test_add_new_user(self, test_db):
 
-        user = dict(email="tmp@gmail.com", location=actions.add_or_return_location(self.location.place))
+        user = dict(email=USER_EMAIL, location=actions.add_or_return_location(self.location.place))
 
         new_user = models.User(**user)
 
@@ -37,23 +39,28 @@ class TestUser:
         db.session.rollback()
 
     def test_retrieval_of_location(self, test_db):
-        location = actions.retrieve_location_for_user(dict(email='tmp@gmail.com'))
+        location = actions.retrieve_location_for_user(dict(email=USER_EMAIL))
         assert location.place == self.location.place
 
     def test_setting_of_verified(self, test_db):
-        user = actions.add_or_return_user(email='tmp@gmail.com')
+        user = actions.add_or_return_user(email=USER_EMAIL)
         assert user.email_verified is False
         actions.set_email_verified(user)
         assert user.email_verified is True
 
     def test_user_deletion(self, test_db):
-        actions.delete_user(email='tmp@gmail.com')
+        actions.delete_user(email=USER_EMAIL)
         all_users = models.User.query.all()
         assert len(all_users) == 0
 
         # Add back the user
-        actions.add_or_return_user(email='tmp@gmail.com',
+        actions.add_or_return_user(email=USER_EMAIL,
                                    location=actions.add_or_return_location(self.location.place))
+        
+    def test_user_reg_date(self, test_db):
+        user = actions.add_or_return_user(USER_EMAIL)
+
+        assert user.registered.date() == datetime.date.today()
 
 
 class TestLocations:
