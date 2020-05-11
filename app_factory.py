@@ -16,7 +16,6 @@ def create_app(db=db, config=Config):
     app.app_context().push()
 
     db.init_app(app)
-    db.create_all()
     db.session.commit()
 
     mail.init_app(app)

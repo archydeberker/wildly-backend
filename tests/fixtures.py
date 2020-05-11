@@ -13,6 +13,10 @@ def setup_test_app():
     app = create_app(config=TestConfig)
     app.app_context().push()
 
+    # Note that we do this for tests, when each DB is created from scratch, but we don't do it for prod, when the
+    # DB is incrementally updated via alembic
+    db.create_all()
+
     with app.test_client() as client:
         yield client, db
 
