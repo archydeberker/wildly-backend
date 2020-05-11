@@ -1,4 +1,4 @@
-"""empty message
+"""add user registration date to DB
 
 Revision ID: af54ba22a492
 Revises: 772612d1de75
