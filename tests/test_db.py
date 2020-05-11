@@ -60,8 +60,7 @@ class TestUser:
     def test_user_reg_date(self, test_db):
         user = actions.add_or_return_user(USER_EMAIL)
 
-        assert user.reg_date.date == datetime.date.today()
-        
+        assert user.registered.date() == datetime.date.today()
 
 
 class TestLocations:
