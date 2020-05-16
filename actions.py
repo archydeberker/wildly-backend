@@ -3,6 +3,7 @@ from sqlite3 import IntegrityError
 from typing import List
 
 import pandas as pd
+from flask import url_for, render_template
 
 import cal
 import models
@@ -12,7 +13,7 @@ import auth
 
 from flask_mail import Mail
 
-from auth import compose_verification_email
+from auth import generate_confirmation_token
 
 mail = Mail()
 
@@ -63,7 +64,7 @@ def register_new_user(email: str, place: str):
 def send_unsubscribe_email(email: str):
     user = get_user(email)
     if user:
-        html = auth.compose_unsubscribe_email(email)
+        html = compose_unsubscribe_email(email)
         auth.send_email(email, 'Unsubscribe from Weather Window', html, mail)
     else:
         raise ValueError
@@ -178,3 +179,18 @@ def needs_invite_for_tomorrow(user: models.User, today):
     if user.most_recent_invite.date() == today:
         return False
     return True
+
+
+def compose_verification_email(email: str):
+    token = generate_confirmation_token(email)
+    confirm_url = url_for('api.confirm_email', token=token, _external=True)
+    unsubscribe_url = url_for('api.unsubscribe', token=token, _external=True)
+    html = render_template('emails/activate.html', confirm_url=confirm_url, unsub_url=unsubscribe_url)
+    return html
+
+
+def compose_unsubscribe_email(email: str):
+    token = generate_confirmation_token(email)
+    unsubscribe_url = url_for('api.unsubscribe', token=token, _external=True)
+    html = render_template('emails/unsubscribe.html', unsub_url=unsubscribe_url)
+    return html
