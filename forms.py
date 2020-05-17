@@ -15,9 +15,6 @@ class Time:
     selected: bool
 
 
-DURATIONS = [Time(label='1 hour', selected=False),
-             Time(label='2 hours', selected=False),
-             Time(label='3 hours', selected=False)]
 
 start_times = {h: Time(label=h, selected=False) for h in HOURS}
 end_times = {h: Time(label=h, selected=False) for h in HOURS}
@@ -39,5 +36,4 @@ class UnsubscribeForm(FlaskForm):
 class PreferencesForm(FlaskForm):
     day_start = SelectField('Between', choices=list(start_times.values()))
     day_end = SelectField('and', choices=list(end_times.values()))
-    duration = SelectField('Duration', choices=DURATIONS)
     temperature = DecimalField('Temperature', places=5)

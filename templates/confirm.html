@@ -15,7 +15,7 @@
             <form action="" method="post" novalidate>
                 {{ form.hidden_tag() }}
                 <div class="columns">
-                    <div class="column is-one-third has-content-centered">
+                    <div class="column is-one-half has-content-centered">
                         <div class="field">
                             <p class="help">What's the period you'd like to consider weather windows for?</p>
                             <div class="field-body">
@@ -48,20 +48,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="column is-one-third">
-                        <p class="help">How long would you like your weather window to be?</p>
-                        <div class="control">
-                            {% for option in form.duration.choices %}
-                            <input type="radio" name={{option}}
-                            {% if option.selected %}
-                            checked
-                            {%endif%}
-                            >
-                            {{option.label}}
-                            {% endfor %}
-                        </div>
-                    </div>
-                    <div class="column is-one-third">
+
+                    <div class="column is-one-half">
                         <p class="help">Some like it hot, some less so - how about you?</p>
                     </div>
                 </div>
