@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero section has-bg-img" style="width:100%; padding-bottom:6%; padding-top:2%">
+    <div class="container">
+        <div class="columns is-centered" style="padding-bottom: 20px">
+            <div class="column is-two-thirds">
+                <h1 class="title has-text-white is-size-1 has-text-centered is-size-2-mobile has-text-weight-normal">
+                    You're all set!
+                </h1>
+                <h2 class="subtitle has-text-white has-text-centered"> We've confirmed your email and added sent
+                    you an invite for tomorrow</h2>
+            </div>
+        </div>
+        <div class="container has-background-white is-rounded" style="border-radius: 20px; padding: 20px">
+            <form action="" method="post" novalidate>
+                {{ form.hidden_tag() }}
+                <div class="columns">
+                    <div class="column is-one-third has-content-centered">
+                        <div class="field">
+                            <p class="help">What's the period you'd like to consider weather windows for?</p>
+                            <div class="field-body">
+                                <div class="field">
+                                    <div class="select" id={{ form.day_start.id }} name={{ form.day_start.id }}>
+                                        <select>
+                                            {% for option in form.day_start.choices %}
+                                            <option {% if option.selected %}
+                                                    selected
+                                                    {% endif %}
+                                                    value={{option.label}}> {{option.label}}
+                                            </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="field">
+                                        <div class="select" id={{ form.day_end.id }} name={{ form.day_end.id }}>
+                                            <select>
+                                                {% for option in form.day_end.choices %}
+                                                <option {% if option.selected %}
+                                                        selected
+                                                        {% endif %}
+                                                        value={{option.label}}> {{option.label}}
+                                                </option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column is-one-third">
+                        <p class="help">How long would you like your weather window to be?</p>
+                        <div class="control">
+                            {% for option in form.duration.choices %}
+                            <input type="radio" name={{option}}
+                            {% if option.selected %}
+                            checked
+                            {%endif%}
+                            >
+                            {{option.label}}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="column is-one-third">
+                        <p class="help">Some like it hot, some less so - how about you?</p>
+                    </div>
+                </div>
+                <div class="field">
+                    <input class="button is-primary" type="submit" value="Register"/>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+<section class="section">
+
+    <h1 class="has-text-centered title has-text-grey has-text-weight-light"> How it works</h1>
+    <div class="columns">
+        <div class="column has-text-centered">
+            <figure class="image" style="height:200px">
+                <img src="/static/assets/images/ICON-1.svg"
+                     style="width:180px; display: inline-block">
+            </figure>
+            <div class="column">Every day, we look up the weather in your area</div>
+        </div>
+        <div class="column has-text-centered">
+            <figure class="image" style="height:200px">
+                <img src="/static/assets/images/ICON-2.svg"
+                     style="width:180px; display: inline-block">
+            </figure>
+            <div class="column">We send you a calendar invite for the best hour</div>
+        </div>
+        <div class="column has-text-centered">
+            <figure class="image" style="height:200px">
+                <img src="/static/assets/images/ICON-3.svg"
+                     style="width:180px; display: inline-block">
+            </figure>
+            <div class="column">So you can take a break and get some sweet fresh air</div>
+        </div>
+    </div>
+    <div class="columns has-text-centered is-8 is-variable">
+    </div>
+    </div>
+
+</section>
+
+<script>
+      // This example requires the Places library. Include the libraries=places
+      // parameter when you first load the API. For example:
+      // <script src="https://maps.googleapis.com/maps/api/js?key=YOURAPIKEY&libraries=places">
+
+      function autoComplete(){
+      initMap('postcode')
+      initMap('postcode2')
+      }
+      function initMap(id) {
+        console.log(id)
+        var input = document.getElementById(id);
+        var strictBounds = document.getElementById('strict-bounds-selector');
+
+        var autocomplete = new google.maps.places.Autocomplete(input);
+
+        // Set the data fields to return when the user selects a place.
+        autocomplete.setFields(
+            ['address_components', 'geometry', 'icon', 'name']);
+
+        autocomplete.addListener('place_changed', function() {
+          infowindow.close();
+          marker.setVisible(false);
+          var place = autocomplete.getPlace();
+          if (!place.geometry) {
+            // User entered the name of a Place that was not suggested and
+            // pressed the Enter key, or the Place Details request failed.
+            window.alert("No details available for input: '" + place.name + "'");
+            return;
+          }
+
+          var address = '';
+          if (place.address_components) {
+            address = [
+              (place.address_components[0] && place.address_components[0].short_name || ''),
+              (place.address_components[1] && place.address_components[1].short_name || ''),
+              (place.address_components[2] && place.address_components[2].short_name || '')
+            ].join(' ');
+          }
+
+          infowindowContent.children['place-icon'].src = place.icon;
+          infowindowContent.children['place-name'].textContent = place.name;
+          infowindowContent.children['place-address'].textContent = address;
+          infowindow.open(map, marker);
+        });
+
+
+      }
+
+
+
+
+
+
+
+
+
+
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{GOOGLE_API_KEY}}&libraries=places&callback=autoComplete"
+        async defer></script>
+
+{% endblock %}

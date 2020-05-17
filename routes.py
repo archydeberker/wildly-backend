@@ -1,11 +1,9 @@
 from smtplib import SMTPRecipientsRefused
-from sqlite3 import IntegrityError
 
-import flask
-from flask import Blueprint, jsonify, request, render_template, flash, redirect, url_for
+from flask import Blueprint, request, render_template, flash, redirect, url_for
 from itsdangerous import BadSignature
 
-from forms import RegisterForm, UnsubscribeForm
+from forms import RegisterForm, UnsubscribeForm, PreferencesForm
 import actions
 import constants
 import auth
@@ -51,7 +49,8 @@ def registered():
 
 @api.route("/confirmed", methods=['GET', 'POST'])
 def confirmed():
-    return homepage()
+    form = PreferencesForm()
+    return render_template('confirm.html', title='Weather Window: Confirmed', form=form)
 
 
 @api.route("/unsubscribe", methods=["GET", "POST"])

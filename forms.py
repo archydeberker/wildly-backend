@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField, DecimalField
 from wtforms.validators import DataRequired
@@ -5,7 +7,22 @@ from wtforms.validators import DataRequired
 HOURS = []
 [[HOURS.append(str(hour) + period) for hour in range(1, 13)] for period in ['AM', 'PM']]
 
-DURATIONS = ['0.5h', '1h', '1.5h']
+
+
+@dataclass
+class Time:
+    label: str
+    selected: bool
+
+
+DURATIONS = [Time(label='1 hour', selected=False),
+             Time(label='2 hours', selected=False),
+             Time(label='3 hours', selected=False)]
+
+start_times = {h: Time(label=h, selected=False) for h in HOURS}
+end_times = {h: Time(label=h, selected=False) for h in HOURS}
+start_times['7AM'] = Time(label='7AM', selected=True)
+end_times['6PM'] = Time(label='6PM', selected=True)
 
 
 class RegisterForm(FlaskForm):
@@ -20,7 +37,7 @@ class UnsubscribeForm(FlaskForm):
 
 
 class PreferencesForm(FlaskForm):
-    day_start = SelectField('Between', HOURS)
-    day_end = SelectField('and', HOURS)
-    duration = SelectField('Duration', DURATIONS)
+    day_start = SelectField('Between', choices=list(start_times.values()))
+    day_end = SelectField('and', choices=list(end_times.values()))
+    duration = SelectField('Duration', choices=DURATIONS)
     temperature = DecimalField('Temperature', places=5)
