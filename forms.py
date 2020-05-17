@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, SelectField, DecimalField
+from wtforms import StringField, SubmitField, SelectField, SelectMultipleField
 from wtforms.validators import DataRequired
 
 HOURS = []
@@ -10,16 +10,16 @@ HOURS = []
 
 
 @dataclass
-class Time:
+class Option:
     label: str
     selected: bool
 
 
 
-start_times = {h: Time(label=h, selected=False) for h in HOURS}
-end_times = {h: Time(label=h, selected=False) for h in HOURS}
-start_times['7AM'] = Time(label='7AM', selected=True)
-end_times['6PM'] = Time(label='6PM', selected=True)
+start_times = {h: Option(label=h, selected=False) for h in HOURS}
+end_times = {h: Option(label=h, selected=False) for h in HOURS}
+start_times['7AM'] = Option(label='7AM', selected=True)
+end_times['6PM'] = Option(label='6PM', selected=True)
 
 
 class RegisterForm(FlaskForm):
@@ -36,4 +36,14 @@ class UnsubscribeForm(FlaskForm):
 class PreferencesForm(FlaskForm):
     day_start = SelectField('Between', choices=list(start_times.values()))
     day_end = SelectField('and', choices=list(end_times.values()))
-    temperature = DecimalField('Temperature', places=5)
+    temperature = SelectField('Temperature', choices=[Option(label='I like it cool', selected=False),
+                                                      Option(label="I don't really mind ", selected=True),
+                                                      Option(label='I like it hot', selected=False)
+                                                      ])
+    activities = SelectMultipleField('Activities', choices=[Option(label='Walking', selected=False),
+                                                           Option(label='Running', selected=False),
+                                                           Option(label='Cycling', selected=False),
+                                                           Option(label='Yoga', selected=False),
+                                                           Option(label='Meditating', selected=False),
+                                                           Option(label='Other', selected=False)
+                                                           ])

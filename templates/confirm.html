@@ -7,7 +7,7 @@
                 <h1 class="title has-text-white is-size-1 has-text-centered is-size-2-mobile has-text-weight-normal">
                     You're all set!
                 </h1>
-                <h2 class="subtitle has-text-white has-text-centered"> We've confirmed your email and added sent
+                <h2 class="subtitle has-text-white has-text-centered"> We've confirmed your email and sent
                     you an invite for tomorrow</h2>
             </div>
         </div>
@@ -15,143 +15,88 @@
             <form action="" method="post" novalidate>
                 {{ form.hidden_tag() }}
                 <div class="columns">
-                    <div class="column is-one-half has-content-centered">
-                        <div class="field">
+                    <div class="column is-one-third has-content-centered">
+                        <div style="min-height:3em">
                             <p class="help">What's the period you'd like to consider weather windows for?</p>
+                        </div>
+                        <div class="field is-horizontal">
+                            <div class="field-label">
+                                <label class="label">From</label>
+                            </div>
                             <div class="field-body">
-                                <div class="field">
-                                    <div class="select" id={{ form.day_start.id }} name={{ form.day_start.id }}>
-                                        <select>
-                                            {% for option in form.day_start.choices %}
-                                            <option {% if option.selected %}
-                                                    selected
-                                                    {% endif %}
-                                                    value={{option.label}}> {{option.label}}
-                                            </option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                    <div class="field">
-                                        <div class="select" id={{ form.day_end.id }} name={{ form.day_end.id }}>
-                                            <select>
-                                                {% for option in form.day_end.choices %}
-                                                <option {% if option.selected %}
-                                                        selected
-                                                        {% endif %}
-                                                        value={{option.label}}> {{option.label}}
-                                                </option>
-                                                {% endfor %}
-                                            </select>
-                                        </div>
-                                    </div>
+                                <div class="select" id={{ form.day_start.id }} name={{ form.day_start.id }}>
+                                    <select>
+                                        {% for option in form.day_start.choices %}
+                                        <option {% if option.selected %}
+                                                selected
+                                                {% endif %}
+                                                value={{option.label}}> {{option.label}}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field is-horizontal">
+                            <div class="field-label">
+                                <label class="label">to</label>
+                            </div>
+                            <div class="field-body">
+                                <div class="select" id={{ form.day_end.id }} name={{ form.day_end.id }}>
+                                    <select>
+                                        {% for option in form.day_end.choices %}
+                                        <option {% if option.selected %}
+                                                selected
+                                                {% endif %}
+                                                value={{option.label}}> {{option.label}}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="column is-one-half">
-                        <p class="help">Some like it hot, some less so - how about you?</p>
+                    <div class="column is-one-third">
+                        <div style="min-height:3em">
+                            <p class="help">Some like it hot, some keep it cool - how about you?</p>
+                        </div>
+                        <div class="control">
+                            {% for option in form.temperature.choices %}
+                            <div>
+                                <input type="radio" name={{option}}
+                                       {% if option.selected %}
+                                       checked
+                                       {%endif%}
+                                >
+                                {{option.label}}
+                            </div>
+                            {% endfor %}
+
+                        </div>
+                    </div>
+                    <div class="column is-one-third">
+                        <div style="min-height:3em">
+                            <p class="help">What will you be doing in your weather window?</p>
+                        </div>
+                        {% for option in form.activities.choices %}
+                        <div>
+                            <input type="checkbox" name={{option}}
+                                   {% if option.selected %}
+                                   checked
+                                   {%endif%}
+                            >
+                            {{option.label}}
+                        </div>
+                        {% endfor %}
                     </div>
                 </div>
-                <div class="field">
-                    <input class="button is-primary" type="submit" value="Register"/>
-                </div>
-            </form>
+        <div class="field has-addons has-addons-centered">
+            <input class="button is-primary " type="submit" value="Update my preferences"/>
         </div>
+        </form>
+    </div>
     </div>
 </section>
-<section class="section">
-
-    <h1 class="has-text-centered title has-text-grey has-text-weight-light"> How it works</h1>
-    <div class="columns">
-        <div class="column has-text-centered">
-            <figure class="image" style="height:200px">
-                <img src="/static/assets/images/ICON-1.svg"
-                     style="width:180px; display: inline-block">
-            </figure>
-            <div class="column">Every day, we look up the weather in your area</div>
-        </div>
-        <div class="column has-text-centered">
-            <figure class="image" style="height:200px">
-                <img src="/static/assets/images/ICON-2.svg"
-                     style="width:180px; display: inline-block">
-            </figure>
-            <div class="column">We send you a calendar invite for the best hour</div>
-        </div>
-        <div class="column has-text-centered">
-            <figure class="image" style="height:200px">
-                <img src="/static/assets/images/ICON-3.svg"
-                     style="width:180px; display: inline-block">
-            </figure>
-            <div class="column">So you can take a break and get some sweet fresh air</div>
-        </div>
-    </div>
-    <div class="columns has-text-centered is-8 is-variable">
-    </div>
-    </div>
-
-</section>
-
-<script>
-      // This example requires the Places library. Include the libraries=places
-      // parameter when you first load the API. For example:
-      // <script src="https://maps.googleapis.com/maps/api/js?key=YOURAPIKEY&libraries=places">
-
-      function autoComplete(){
-      initMap('postcode')
-      initMap('postcode2')
-      }
-      function initMap(id) {
-        console.log(id)
-        var input = document.getElementById(id);
-        var strictBounds = document.getElementById('strict-bounds-selector');
-
-        var autocomplete = new google.maps.places.Autocomplete(input);
-
-        // Set the data fields to return when the user selects a place.
-        autocomplete.setFields(
-            ['address_components', 'geometry', 'icon', 'name']);
-
-        autocomplete.addListener('place_changed', function() {
-          infowindow.close();
-          marker.setVisible(false);
-          var place = autocomplete.getPlace();
-          if (!place.geometry) {
-            // User entered the name of a Place that was not suggested and
-            // pressed the Enter key, or the Place Details request failed.
-            window.alert("No details available for input: '" + place.name + "'");
-            return;
-          }
-
-          var address = '';
-          if (place.address_components) {
-            address = [
-              (place.address_components[0] && place.address_components[0].short_name || ''),
-              (place.address_components[1] && place.address_components[1].short_name || ''),
-              (place.address_components[2] && place.address_components[2].short_name || '')
-            ].join(' ');
-          }
-
-          infowindowContent.children['place-icon'].src = place.icon;
-          infowindowContent.children['place-name'].textContent = place.name;
-          infowindowContent.children['place-address'].textContent = address;
-          infowindow.open(map, marker);
-        });
-
-
-      }
-
-
-
-
-
-
-
-
-
-
-</script>
-<script src="https://maps.googleapis.com/maps/api/js?key={{GOOGLE_API_KEY}}&libraries=places&callback=autoComplete"
-        async defer></script>
 
 {% endblock %}
