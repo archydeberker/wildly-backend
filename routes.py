@@ -2,6 +2,7 @@ from smtplib import SMTPRecipientsRefused
 
 from flask import Blueprint, request, render_template, flash, redirect, url_for
 from itsdangerous import BadSignature
+from wtforms import ValidationError
 
 from forms import RegisterForm, UnsubscribeForm, PreferencesForm
 import actions
@@ -51,8 +52,12 @@ def registered():
 def confirmed():
     form = PreferencesForm()
     if request.method == 'POST':
-        actions.update_preferences(form)
-        flash(f"We've updated your preferences, thanks")
+        try:
+            form.validate()
+            actions.update_preferences(form)
+            flash(f"We've updated your preferences, thanks")
+        except ValidationError as error:
+            flash(error, category='error')
     return render_template('confirm.html', title='Weather Window: Confirmed', form=form)
 
 

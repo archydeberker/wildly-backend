@@ -2,18 +2,10 @@ from dataclasses import dataclass
 
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField, SelectMultipleField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, ValidationError
 
 HOURS = []
 [[HOURS.append(str(hour) + period) for hour in range(1, 13)] for period in ['AM', 'PM']]
-
-
-
-@dataclass
-class Option:
-    label: str
-    selected: bool
-
 
 
 class RegisterForm(FlaskForm):
@@ -42,3 +34,12 @@ class PreferencesForm(FlaskForm):
                                                            'Meditating',
                                                            'Other',
                                                            ])
+
+    def validate(self):
+        """
+        Custom validation to ensure day start is not after day end
+        """
+        super().validate()
+        if HOURS.index(self.day_start.data) >= HOURS.index(self.day_end.data):
+            raise ValidationError('Your day must end after it begins and last an hour or more!')
+        return True
