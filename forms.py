@@ -8,6 +8,12 @@ import models
 from preferences import DefaultPreferences, parse_time_to_int
 
 
+def parse_temperature(option):
+    parsed = option.strip("\\'(),")
+    print(parsed)
+    return parsed
+
+
 class RegisterForm(FlaskForm):
     email = StringField('Email Address', validators=[DataRequired()])
     postcode = StringField('Your Postcode', validators=[DataRequired()])
@@ -29,7 +35,8 @@ class PreferencesForm(FlaskForm):
                           default=DefaultPreferences.day_end,
                           coerce=parse_time_to_int)
     temperature = SelectField('Temperature', choices=DefaultPreferences.temperature_options,
-                              default=DefaultPreferences.temperature)
+                              default=DefaultPreferences.temperature,
+                              coerce=parse_temperature)
     activities = SelectMultipleField('Activities', choices=DefaultPreferences.activity_options)
 
     def validate(self):
@@ -49,3 +56,5 @@ class PreferencesForm(FlaskForm):
         self.day_end.default = preferences.day_end
         self.temperature.default = preferences.temperature
         self.activities.default = preferences.activities
+
+        print('Initialized')

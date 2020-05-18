@@ -50,7 +50,7 @@ def update_preferences_for_user_from_form(user_email: str, form):
     prefs.day_start = form.day_start.data
     prefs.day_end = form.day_end.data
     prefs.temperature = form.temperature.data
-    prefs.activities = [models.Activity(name=activity) for activity in form.activities.data]
+    prefs.activities = [add_or_return_activity(activity) for activity in form.activities.data]
 
     models.db.session.add(user)
     models.db.session.commit()

@@ -67,7 +67,7 @@
                             {% for option in form.temperature.choices %}
                             <div class="field">
                                 <input type="radio" name="temperature"  class="is-checkradio" id={{option}} value={{option}}
-                                {% if loop.index - 1 == form.temperature.default %}
+                                {% if option[0] == form.temperature.default %}
                                        checked="checked"
                                        {% endif %}
                                 >
