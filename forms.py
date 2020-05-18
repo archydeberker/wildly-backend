@@ -3,6 +3,8 @@ from dataclasses import dataclass
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField, SelectMultipleField
 from wtforms.validators import DataRequired, ValidationError
+
+import models
 from preferences import DefaultPreferences, parse_time_to_int
 
 
@@ -38,3 +40,12 @@ class PreferencesForm(FlaskForm):
         if self.day_start.data >= self.day_end.data:
             raise ValidationError('Your day must end after it begins and last an hour or more!')
         return True
+
+    def initialize_from_db(self, preferences: models.Preferences):
+        """
+        Initialize the values of the form from an entry in the `Preferences` table of the database.
+        """
+        self.day_start.default = preferences.day_start
+        self.day_end.default = preferences.day_end
+        self.temperature.default = preferences.temperature
+        self.activities.default = preferences.activities

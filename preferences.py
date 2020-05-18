@@ -37,3 +37,7 @@ def create_default_preference_row(preferences=DefaultPreferences):
                               day_end=preferences.day_end,
                               temperature=preferences.temperature,
                               activities=preferences.activities)
+
+
+def update_preferences_for_user_from_form(user_email: str, form):
+    pass

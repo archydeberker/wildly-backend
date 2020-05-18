@@ -36,7 +36,7 @@ def location_dict():
     yield loc_dict
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def test_db(setup_test_app):
     _, db, _ = setup_test_app
 
