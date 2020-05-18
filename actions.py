@@ -44,6 +44,7 @@ def add_tomorrows_forecast_to_db(location: models.Location):
 
 
 def update_preferences_for_user_from_form(user_email: str, form):
+    #TODO lots of unecessary retrieval of user row from emails here, remove
     user = get_user(user_email)
     prefs = add_or_return_user_preferences(user_email)
 
@@ -54,6 +55,8 @@ def update_preferences_for_user_from_form(user_email: str, form):
 
     models.db.session.add(user)
     models.db.session.commit()
+
+    return user
 
 
 def add_new_user_to_db_with_default_preferences(email, location):

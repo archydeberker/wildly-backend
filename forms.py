@@ -10,7 +10,6 @@ from preferences import DefaultPreferences, parse_time_to_int
 
 def parse_temperature(option):
     parsed = option.strip("\\'(),")
-    print(parsed)
     return parsed
 
 

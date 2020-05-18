@@ -48,22 +48,20 @@ def registered():
     return homepage()
 
 
-@api.route("/confirmed/<token>", methods=['GET', 'POST'])
-def confirmed(token):
-    # email = auth.decode_token_to_email(token)
-    user = actions.get_user('berkerboy@gmail.com')
+@api.route("/preferences/<token>", methods=['GET', 'POST'])
+def preferences(token):
+    email = auth.decode_token_to_email(token)
     form = PreferencesForm()
 
-    # In this step we will setup the form to display current preferences
-    # form = actions.load_user_preferences(form, user)
     if request.method == 'POST':
         try:
             form.validate()
-            actions.update_preferences_for_user_from_form('berkerboy@gmail.com', form=form)
+            actions.update_preferences_for_user_from_form(email, form=form)
             flash(f"We've updated your preferences, thanks")
         except ValidationError as error:
             flash(error, category='error')
 
+    user = actions.get_user(email)
     form.initialize_from_db(user.preferences)
     return render_template('confirm.html', title='Weather Window: Confirmed', form=form)
 
@@ -103,6 +101,7 @@ def confirm_email(token):
     email = auth.decode_token_to_email(token)
     if email is None:
         flash('This confirmation link is invalid or has expired', 'danger')
+        redirect(url_for('api.index'))
     else:
         print(f"Email confirmed for user {email}")
         user = actions.get_user(email)
@@ -114,7 +113,7 @@ def confirm_email(token):
         actions.send_tomorrow_window_to_user(user=user)
         flash('Email confirmed, thanks! Check your calendar, you should have an invite for tomorrow!', 'success')
 
-    return redirect(url_for('api.confirmed'))
+    return redirect(url_for('api.preferences', token=token))
 
 
 @api.route("/unsubscribe/<token>", methods=["GET", "POST"])
