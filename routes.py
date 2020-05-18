@@ -53,7 +53,6 @@ def confirmed(token):
     # email = auth.decode_token_to_email(token)
     user = actions.get_user('berkerboy@gmail.com')
     form = PreferencesForm()
-    form.initialize_from_db(user.preferences)
 
     # In this step we will setup the form to display current preferences
     # form = actions.load_user_preferences(form, user)
@@ -61,10 +60,11 @@ def confirmed(token):
         try:
             form.validate()
             actions.update_preferences_for_user_from_form('berkerboy@gmail.com', form=form)
-            form.initialize_from_db(user.preferences)
             flash(f"We've updated your preferences, thanks")
         except ValidationError as error:
             flash(error, category='error')
+
+    form.initialize_from_db(user.preferences)
     return render_template('confirm.html', title='Weather Window: Confirmed', form=form)
 
 

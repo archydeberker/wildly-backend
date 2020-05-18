@@ -55,6 +55,4 @@ class PreferencesForm(FlaskForm):
         self.day_start.default = preferences.day_start
         self.day_end.default = preferences.day_end
         self.temperature.default = preferences.temperature
-        self.activities.default = preferences.activities
-
-        print('Initialized')
+        self.activities.default = [activity.name for activity in preferences.activities]
