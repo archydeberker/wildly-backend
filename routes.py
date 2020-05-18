@@ -4,7 +4,7 @@ from flask import Blueprint, request, render_template, flash, redirect, url_for
 from itsdangerous import BadSignature
 from wtforms import ValidationError
 
-from forms import RegisterForm, UnsubscribeForm, PreferencesForm
+from forms import RegisterForm, UnsubscribeForm, PreferencesForm, UpdateForm
 import actions
 import constants
 import auth
@@ -80,14 +80,22 @@ def unsubscribe_page():
     return render_template('unsubscribe.html', form=form)
 
 
+@api.route("/changepreferences", methods=["GET", "POST"])
+def preferences_page():
+    form = UpdateForm()
+    if form.validate_on_submit():
+        try:
+            email = form.email.data
+            actions.send_update_preferences_email(email)
+            flash(f"Update preferences email sent to {email}")
+        except ValueError:
+            flash(f"We couldn't find that user, have you already unsubscribed?")
+
+    return render_template('change_preferences.html', form=form)
+
+
 @api.route("/")
 def index():
-    return render_template('base.html')
-
-
-@api.route("/flash")
-def test_flash():
-    flash('This is a test flash')
     return render_template('base.html')
 
 

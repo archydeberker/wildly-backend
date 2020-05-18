@@ -97,6 +97,15 @@ def send_unsubscribe_email(email: str):
         raise ValueError
 
 
+def send_update_preferences_email(email: str):
+    user = get_user(email)
+    if user:
+        html = compose_update_preferences_email(email)
+        auth.send_email(email, 'Update preferences for Weather Window', html, mail)
+    else:
+        raise ValueError
+
+
 def retrieve_location_for_user(user: dict):
     user_row = models.User.query.filter_by(email=user["email"]).first()
 
@@ -247,4 +256,11 @@ def compose_unsubscribe_email(email: str):
     token = generate_confirmation_token(email)
     unsubscribe_url = url_for('api.unsubscribe', token=token, _external=True)
     html = render_template('emails/unsubscribe.html', unsub_url=unsubscribe_url)
+    return html
+
+
+def compose_update_preferences_email(email: str):
+    token = generate_confirmation_token(email)
+    update_url = url_for('api.preferences', token=token, _external=True)
+    html = render_template('emails/preferences.html', update_url=update_url)
     return html

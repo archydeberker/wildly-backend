@@ -24,6 +24,11 @@ class UnsubscribeForm(FlaskForm):
     submit = SubmitField('Unsubscribe')
 
 
+class UpdateForm(FlaskForm):
+    email = StringField('Email Address', validators=[DataRequired()])
+    submit = SubmitField('Update Preferences')
+
+
 class PreferencesForm(FlaskForm):
     day_start = SelectField('day_start',
                             choices=DefaultPreferences.hours,
