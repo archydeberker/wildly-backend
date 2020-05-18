@@ -21,7 +21,7 @@ mail = Mail()
 def get_forecast_for_tomorrow_from_db(location: models.Location, to_pandas=True):
     today = datetime.datetime.now()
     forecasts = models.Forecast.query.filter(models.Forecast.weather_timestamp > today,
-                                            models.Forecast.location_id == location.id)
+                                             models.Forecast.location_id == location.id)
 
     if to_pandas:
         output = pd.read_sql(forecasts.statement, forecasts.session.bind)
@@ -89,13 +89,18 @@ def retrieve_location_for_user(user: dict):
 
 def add_or_return_user_preferences(user_email: str):
     user_row = get_user(user_email)
-    preferences = user_row.preferences
+    prefs = user_row.preferences
+    if prefs is None:
+        prefs = preferences.create_default_preference_row()
+        prefs.user_id = user_row.id
 
+    models.db.session.add(prefs)
+    models.db.session.commit()
 
+    return prefs
 
 
 def add_or_return_location(place: str):
-
     location_row = get_location_by_place(place)
     if location_row is None:
         location = dict(place=place)
@@ -139,7 +144,7 @@ def add_activity(activity_name: str):
 def add_or_return_activity(activity_name: str):
     activity_row = models.Activity.query.filter_by(name=activity_name).first()
     if activity_row is None:
-       activity_row = add_activity(activity_name)
+        activity_row = add_activity(activity_name)
 
     return activity_row
 
@@ -148,7 +153,7 @@ def add_or_return_user(email: str, location: models.Location = None):
     user_row = models.User.query.filter_by(email=email).first()
     if user_row is None:
         if location is not None:
-           user_row = add_user(email, location)
+            user_row = add_user(email, location)
         else:
             raise ValueError('User not found and no location specified')
 

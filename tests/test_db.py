@@ -191,6 +191,18 @@ class TestPreferences:
         assert new_preferences.day_end != old_day_end
         assert new_preferences.temperature != old_temperature
 
+    def test_retrieve_preferences_for_user_with_existing_preferences(self):
+        prefs = actions.add_or_return_user_preferences(self.new_user_email)
+        assert prefs is not None
+
+    def test_retrieve_preferences_for_user_without_existing_preferences(self):
+        legacy_user = 'legacy@gmail.com'
+        # Create a new user, without any preferences
+        _ = actions.add_user(email=legacy_user, location=models.Location.query.first())
+        prefs = actions.add_or_return_user_preferences(legacy_user)
+
+        assert prefs is not None
+
 
 class TestActivities:
     new_user_email = "new@gmail.com"
