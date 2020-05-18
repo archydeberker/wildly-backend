@@ -1,10 +1,10 @@
 @charset "utf-8";
 
 // Import a Google Font
-@import url('https://fonts.googleapis.com/css?family=Poppins:300,500,700');
+@import url("https://fonts.googleapis.com/css?family=Poppins:300,500,700");
 
 // Set your brand colors
-$yellow: #FFEB3B;
+$yellow: #ffeb3b;
 $pink: #ea9085;
 $dusk: #fdd998;
 $link: $pink;
@@ -18,10 +18,11 @@ $family-primary: $family-sans-serif;
 
 $size-1: 4rem;
 
-.has-bg-img { background: url('/static/assets/images/clouds.png')
-               center center;
-                background-repeat: no-repeat;
-                width: 100%;
-                }
+.has-bg-img {
+  background: url("/static/assets/images/clouds.png") center center;
+  background-repeat: no-repeat;
+  width: 100%;
+}
 
 @import "../bulma-0.8/bulma.sass";
+@import "../sass/extensions/bulma-checkradio.sass";

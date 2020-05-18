@@ -63,13 +63,15 @@
                         </div>
                         <div class="control">
                             {% for option in form.temperature.choices %}
-                            <div>
-                                <input type="radio" name="temperature" value={{option}}
-                                       {% if option.selected %}
-                                       checked
-                                       {%endif%}
-                                >
+                            <div class="field">
+                                <input type="radio" name="temperature"  class="is-checkradio" id={{option}}
+                                {% if option.selected %}
+                                checked="checked"
+                                {% endif %}
+                                       >
+                                <label for={{option}}>
                                 {{option.label}}
+                                    </label>
                             </div>
                             {% endfor %}
 
