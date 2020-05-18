@@ -83,12 +83,9 @@
                         </div>
                         {% for option in form.activities.choices %}
                         <div>
-                            <input type="checkbox" name={{option}}
-                                   {% if option.selected %}
-                                   checked
-                                   {%endif%}
-                            >
-                            {{option.label}}
+                            <input class="is-checkradio is-info" type="checkbox" id={{option}}>
+                            <label for={{option}}> {{option.label}}</label>
+
                         </div>
                         {% endfor %}
                     </div>
