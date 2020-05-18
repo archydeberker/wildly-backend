@@ -3,9 +3,7 @@ from dataclasses import dataclass
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField, SelectMultipleField
 from wtforms.validators import DataRequired, ValidationError
-
-HOURS = []
-[[HOURS.append(str(hour) + period) for hour in range(1, 13)] for period in ['AM', 'PM']]
+from preferences import DefaultPreferences
 
 
 class RegisterForm(FlaskForm):
@@ -20,26 +18,17 @@ class UnsubscribeForm(FlaskForm):
 
 
 class PreferencesForm(FlaskForm):
-    day_start = SelectField('day_start', choices=HOURS, default=7)
-    day_end = SelectField('day_end', choices=HOURS, default=19)
-    temperature = SelectField('Temperature', choices=[("cold", 'I like it cool'),
-                                                      ("neutral", "I don't really mind"),
-                                                      ("hot", "I like it hot")
-                                                      ],
-                              default=1)
-    activities = SelectMultipleField('Activities', choices=['Walking',
-                                                           'Running',
-                                                           'Cycling',
-                                                           'Yoga',
-                                                           'Meditating',
-                                                           'Other',
-                                                           ])
+    day_start = SelectField('day_start', choices=DefaultPreferences.hours, default=DefaultPreferences.day_start)
+    day_end = SelectField('day_end', choices=DefaultPreferences.hours, default=DefaultPreferences.day_end)
+    temperature = SelectField('Temperature', choices=DefaultPreferences.temperature_options,
+                              default=DefaultPreferences.temperature)
+    activities = SelectMultipleField('Activities', choices=DefaultPreferences.activity_options)
 
     def validate(self):
         """
         Custom validation to ensure day start is not after day end
         """
         super().validate()
-        if HOURS.index(self.day_start.data) >= HOURS.index(self.day_end.data):
+        if DefaultPreferences.hours.index(self.day_start.data) >= DefaultPreferences.hours.index(self.day_end.data):
             raise ValidationError('Your day must end after it begins and last an hour or more!')
         return True
