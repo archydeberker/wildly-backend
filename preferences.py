@@ -10,11 +10,11 @@ class DefaultPreferences:
     day_start = 7
     day_end = 19
 
-    temperature_options = [(0, 'I like it cool'),
-                           (1, "I don't really mind"),
-                           (2, "I like it hot")
+    temperature_options = [('cool', 'I like it cool'),
+                           ('neutral', "I don't really mind"),
+                           ('hot', "I like it hot")
                            ]
-    temperature = 1
+    temperature = 'neutral'
 
     activity_options = ['Walking',
                         'Running',
@@ -28,3 +28,4 @@ class DefaultPreferences:
 
 def parse_time_to_int(time_string):
     return parser.parse(time_string).hour
+

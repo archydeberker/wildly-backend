@@ -14,6 +14,7 @@ import auth
 from flask_mail import Mail
 
 from auth import generate_confirmation_token
+from preferences import DefaultPreferences
 
 mail = Mail()
 
@@ -52,9 +53,17 @@ def load_user_preferences(form, user):
     return form
 
 
+def create_default_preference_row(preferences=DefaultPreferences):
+    return models.Preferences(day_start=preferences.day_start,
+                              day_end=preferences.day_end,
+                              temperature=preferences.temperature,
+                              activities=preferences.activities)
+
+
 def assign_default_preferences(user):
     """Create a new row in the preferences table for `user` and populate it with default values"""
 
+    return models.Preferences(user=user)
 
 
 def register_new_user(email: str, place: str):
