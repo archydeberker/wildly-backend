@@ -43,12 +43,8 @@ def add_tomorrows_forecast_to_db(location: models.Location):
     models.db.session.commit()
 
 
-def update_preferences(form):
-    print(form.data)
-
-
 def add_new_user_to_db_with_default_preferences(email, location):
-    user = add_user(email, location)
+    user = add_or_return_user(email, location)
     prefs = preferences.create_default_preference_row()
     prefs.user_id = user.id
 
@@ -89,6 +85,13 @@ def retrieve_location_for_user(user: dict):
     user_row = models.User.query.filter_by(email=user["email"]).first()
 
     return models.Location.query.filter_by(id=user_row.location.id).first()
+
+
+def add_or_return_user_preferences(user_email: str):
+    user_row = get_user(user_email)
+    preferences = user_row.preferences
+
+
 
 
 def add_or_return_location(place: str):
@@ -145,7 +148,7 @@ def add_or_return_user(email: str, location: models.Location = None):
     user_row = models.User.query.filter_by(email=email).first()
     if user_row is None:
         if location is not None:
-           add_user(email, location)
+           user_row = add_user(email, location)
         else:
             raise ValueError('User not found and no location specified')
 

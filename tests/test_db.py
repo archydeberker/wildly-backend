@@ -144,7 +144,7 @@ class TestPreferences:
         assert len(all_users) > 0
         user = all_users[0]
 
-        user_preferences = models.Preferences.query.filter_by(user_id=user.id).first()
+        user_preferences = user.preferences
         assert user_preferences is None
 
         # Now create some preferences and associate with that user
@@ -177,8 +177,7 @@ class TestPreferences:
 
     def test_updating_of_simple_preferences(self):
         # Get preferences for our test user
-        user_id = actions.get_user(self.new_user_email).id
-        prefs = models.Preferences.query.filter_by(user_id=user_id).first()
+        prefs = actions.get_user(self.new_user_email).preferences
         old_day_start, old_day_end, old_temperature = prefs.day_start, prefs.day_end, prefs.temperature
         prefs.day_start = 6
         prefs.day_end = 22
@@ -186,7 +185,7 @@ class TestPreferences:
 
         db.session.add(prefs)
         db.session.commit()
-        new_preferences = models.Preferences.query.filter_by(user_id=user_id).first()
+        new_preferences = actions.get_user(self.new_user_email).preferences
 
         assert new_preferences.day_start != old_day_start
         assert new_preferences.day_end != old_day_end
@@ -209,15 +208,14 @@ class TestActivities:
         activity_row = actions.add_or_return_activity(self.activity)
 
         # Get preferences for our test user
-        user_id = actions.get_user(self.new_user_email).id
-        prefs = models.Preferences.query.filter_by(user_id=user_id).first()
+        prefs = actions.get_user(self.new_user_email).preferences
 
         prefs.activities.append(activity_row)
 
         db.session.add(prefs)
         db.session.commit()
 
-        prefs = models.Preferences.query.filter_by(user_id=user_id).first()
+        prefs = actions.get_user(self.new_user_email).preferences
 
         assert self.activity in [activity.name for activity in prefs.activities]
 
