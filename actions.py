@@ -46,8 +46,16 @@ def add_tomorrows_forecast_to_db(location: models.Location):
 def update_preferences(form):
     print(form.data)
 
+
 def load_user_preferences(form, user):
+    """Load user preferences"""
     return form
+
+
+def assign_default_preferences(user):
+    """Create a new row in the preferences table for `user` and populate it with default values"""
+
+
 
 def register_new_user(email: str, place: str):
     print(f"Received new user signup for {email} and {place}")

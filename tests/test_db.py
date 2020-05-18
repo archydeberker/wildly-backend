@@ -116,18 +116,23 @@ class TestForecasts:
 
 class TestPreferences:
 
+    def test_assigning_default_preferences_to_old_user(self):
+        """If an existing user is viewing their preferences, we should fill with defaults"""
+        all_users = models.User.query.all()
+        assert len(all_users) > 0
+
     def test_new_user_has_default_preferences_assigned(self):
-        pass
+        assert False
 
     def test_update_day_start(self):
-        pass
+        assert False
 
     def test_update_day_end(self):
-        pass
+        assert False
 
     def test_update_temperature(self):
-        pass
+        assert False
 
     def test_update_activities(self):
-        pass
+        assert False
 

@@ -18,7 +18,7 @@ user_interests = db.Table(
         primary_key=True,
     ),
     db.Column(
-        "user_id", db.Integer, db.ForeignKey("user.id"), primary_key=True
+        "preferences_id", db.Integer, db.ForeignKey("preferences.id"), primary_key=True
     ),
 )
 
@@ -30,8 +30,9 @@ class User(db.Model):
     most_recent_invite = db.Column(db.DateTime, nullable=True)
     registered = db.Column(db.DateTime, nullable=True)
 
-    # 1 to 1 relationship (each user has exactly one location)
+    # 1 to 1 relationship (each user has exactly one location & preferences)
     location_id = db.Column(db.Integer, db.ForeignKey("location.id"), nullable=False)
+    preferences_id = db.Column(db.Integer, db.ForeignKey("preferences.id"), nullable=True)
 
     def __repr__(self):
         return f"<User {self.email}>"
