@@ -50,6 +50,9 @@ def registered():
 @api.route("/confirmed", methods=['GET', 'POST'])
 def confirmed():
     form = PreferencesForm()
+    if request.method == 'POST':
+        actions.update_preferences(form)
+        flash(f"We've updated your preferences, thanks")
     return render_template('confirm.html', title='Weather Window: Confirmed', form=form)
 
 

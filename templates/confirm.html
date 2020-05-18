@@ -16,21 +16,22 @@
                 {{ form.hidden_tag() }}
                 <div class="columns">
                     <div class="column is-one-third has-content-centered">
-                        <div style="min-height:3em">
-                            <p class="help">What's the period you'd like to consider weather windows for?</p>
+                        <div style="min-height:5em">
+                            <p>What's the period you'd like to consider weather windows for?</p>
                         </div>
                         <div class="field is-horizontal">
                             <div class="field-label">
-                                <label class="label">From</label>
+                                <label class="label" for={{form.day_start.id}}>From</label>
                             </div>
                             <div class="field-body">
-                                <div class="select" id={{ form.day_start.id }} name={{ form.day_start.id }}>
-                                    <select>
+                                <div class="select" >
+                                    <select id={{form.day_start.id}} name={{form.day_start.id}}>
                                         {% for option in form.day_start.choices %}
-                                        <option {% if option.selected %}
+                                        <option {% if loop.index  == form.day_start.default %}
                                                 selected
                                                 {% endif %}
-                                                value={{option.label}}> {{option.label}}
+                                                value={{option}}
+                                        > {{option}}
                                         </option>
                                         {% endfor %}
                                     </select>
@@ -39,16 +40,17 @@
                         </div>
                         <div class="field is-horizontal">
                             <div class="field-label">
-                                <label class="label">to</label>
+                                <label class="label" for={{form.day_end.id}}>to</label>
                             </div>
                             <div class="field-body">
-                                <div class="select" id={{ form.day_end.id }} name={{ form.day_end.id }}>
-                                    <select>
+                                <div class="select">
+                                    <select id={{form.day_end.id}} name={{form.day_end.id}}>
                                         {% for option in form.day_end.choices %}
-                                        <option {% if option.selected %}
+                                        <option {% if loop.index  == form.day_end.default %}
                                                 selected
                                                 {% endif %}
-                                                value={{option.label}}> {{option.label}}
+                                                value={{option}}
+                                                > {{option}}
                                         </option>
                                         {% endfor %}
                                     </select>
@@ -58,19 +60,19 @@
                     </div>
 
                     <div class="column is-one-third">
-                        <div style="min-height:3em">
-                            <p class="help">Some like it hot, some keep it cool - how about you?</p>
+                        <div style="min-height:5em">
+                            <p>Some like it hot, some keep it cool - how about you?</p>
                         </div>
                         <div class="control">
                             {% for option in form.temperature.choices %}
                             <div class="field">
-                                <input type="radio" name="temperature"  class="is-checkradio" id={{option}}
-                                {% if option.selected %}
-                                checked="checked"
-                                {% endif %}
-                                       >
+                                <input type="radio" name="temperature"  class="is-checkradio" id={{option}} value={{option}}
+                                {% if loop.index - 1 == form.temperature.default %}
+                                       checked="checked"
+                                       {% endif %}
+                                >
                                 <label for={{option}}>
-                                {{option.label}}
+                                {{option[1]}}
                                     </label>
                             </div>
                             {% endfor %}
@@ -78,13 +80,13 @@
                         </div>
                     </div>
                     <div class="column is-one-third">
-                        <div style="min-height:3em">
-                            <p class="help">What will you be doing in your weather window?</p>
+                        <div style="min-height:5em">
+                            <p>What will you be doing in your weather window?</p>
                         </div>
                         {% for option in form.activities.choices %}
                         <div>
-                            <input class="is-checkradio is-info" type="checkbox" id={{option}}>
-                            <label for={{option}}> {{option.label}}</label>
+                            <input class="is-checkradio is-info" type="checkbox" id={{option}} name="activities" value={{option}}>
+                            <label for={{option}}> {{option}}</label>
 
                         </div>
                         {% endfor %}

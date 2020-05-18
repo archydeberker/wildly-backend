@@ -43,6 +43,10 @@ def add_tomorrows_forecast_to_db(location: models.Location):
     models.db.session.commit()
 
 
+def update_preferences(form):
+    print(form.data)
+
+
 def register_new_user(email: str, place: str):
     print(f"Received new user signup for {email} and {place}")
     location = add_or_return_location(place)
