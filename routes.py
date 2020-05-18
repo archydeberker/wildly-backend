@@ -59,7 +59,7 @@ def confirmed(token):
     if request.method == 'POST':
         try:
             form.validate()
-            actions.update_preferences(form)
+            actions.update_preferences_for_user_from_form('test@gmail.com', form=form)
             flash(f"We've updated your preferences, thanks")
         except ValidationError as error:
             flash(error, category='error')

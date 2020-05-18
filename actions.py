@@ -43,6 +43,19 @@ def add_tomorrows_forecast_to_db(location: models.Location):
     models.db.session.commit()
 
 
+def update_preferences_for_user_from_form(user_email: str, form):
+    user = get_user(user_email)
+    prefs = add_or_return_user_preferences(user_email)
+
+    prefs.day_start = form.day_start.data
+    prefs.day_end = form.day_end.data
+    prefs.temperature = form.temperature.data
+    prefs.activities = [models.Activity(name=activity) for activity in form.activities.data]
+
+    models.db.session.add(user)
+    models.db.session.commit()
+
+
 def add_new_user_to_db_with_default_preferences(email, location):
     user = add_or_return_user(email, location)
     prefs = preferences.create_default_preference_row()

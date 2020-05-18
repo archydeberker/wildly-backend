@@ -39,5 +39,3 @@ def create_default_preference_row(preferences=DefaultPreferences):
                               activities=preferences.activities)
 
 
-def update_preferences_for_user_from_form(user_email: str, form):
-    pass
