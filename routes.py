@@ -49,7 +49,7 @@ def registered():
 
 
 @api.route("/preferences/<token>", methods=['GET', 'POST'])
-def preferences(token):
+def preferences(token, header="Update your preferences", subheader="Customize your weather window"):
     email = auth.decode_token_to_email(token)
     form = PreferencesForm()
 
@@ -63,7 +63,7 @@ def preferences(token):
 
     user = actions.get_user(email)
     form.initialize_from_db(user.preferences)
-    return render_template('confirm.html', title='Weather Window: Confirmed', form=form)
+    return render_template('confirm.html', title='Weather Window: Preferences', header=header, subheader=subheader, form=form)
 
 
 @api.route("/unsubscribe", methods=["GET", "POST"])
@@ -121,7 +121,10 @@ def confirm_email(token):
         actions.send_tomorrow_window_to_user(user=user)
         flash('Email confirmed, thanks! Check your calendar, you should have an invite for tomorrow!', 'success')
 
-    return redirect(url_for('api.preferences', token=token))
+    return redirect(url_for('api.preferences',
+                            token=token,
+                            header="You're all set!",
+                            subheader="We've confirmed your email and sent you an invite for tomorrow"))
 
 
 @api.route("/unsubscribe/<token>", methods=["GET", "POST"])
