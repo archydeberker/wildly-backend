@@ -1,5 +1,7 @@
 from dateutil import parser
 
+import models
+
 HOURS = []
 [[HOURS.append(str(hour) + period) for hour in range(1, 13)] for period in ['AM', 'PM']]
 
@@ -29,3 +31,20 @@ class DefaultPreferences:
 def parse_time_to_int(time_string):
     return parser.parse(time_string).hour
 
+
+def load_user_preferences(form, user):
+    """Load user preferences"""
+    return form
+
+
+def create_default_preference_row(preferences=DefaultPreferences):
+    return models.Preferences(day_start=preferences.day_start,
+                              day_end=preferences.day_end,
+                              temperature=preferences.temperature,
+                              activities=preferences.activities)
+
+
+def assign_default_preferences(user):
+    """Create a new row in the preferences table for `user` and populate it with default values"""
+
+    return models.Preferences(user=user)

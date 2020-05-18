@@ -5,6 +5,7 @@ from sqlalchemy.exc import IntegrityError
 
 import actions
 import models
+import preferences
 from models import db
 from preferences import DefaultPreferences
 from tests.fixtures import test_db, setup_test_app, test_locations
@@ -118,7 +119,7 @@ class TestForecasts:
 class TestPreferences:
 
     def test_create_preferences_row_with_default_values(self):
-        preference_row = actions.create_default_preference_row()
+        preference_row = preferences.create_default_preference_row()
         assert preference_row.day_start == DefaultPreferences.day_start
         assert preference_row.day_end == DefaultPreferences.day_end
         assert preference_row.temperature == DefaultPreferences.temperature
@@ -126,7 +127,7 @@ class TestPreferences:
 
     def test_preferences_cannot_be_created_without_a_user(self):
 
-        preference_row = actions.create_default_preference_row()
+        preference_row = preferences.create_default_preference_row()
 
         models.db.session.add(preference_row)
         with pytest.raises(IntegrityError):
@@ -135,7 +136,7 @@ class TestPreferences:
         db.session.rollback()
 
     def test_assigning_default_preferences_to_existing_user(self):
-        """If an existing user is viewing their preferences, we should fill with defaults"""
+        """If an existing user does not have any preferences, we should be able to assign some"""
         all_users = models.User.query.all()
         assert len(all_users) > 0
         user = all_users[0]
@@ -144,7 +145,7 @@ class TestPreferences:
         assert user_preferences is None
 
         # Now create some preferences and associate with that user
-        preference_row = actions.create_default_preference_row()
+        preference_row = preferences.create_default_preference_row()
         preference_row.user_id = user.id
 
         db.session.add(preference_row)
