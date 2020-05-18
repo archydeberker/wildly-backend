@@ -64,7 +64,7 @@
                         <div class="control">
                             {% for option in form.temperature.choices %}
                             <div>
-                                <input type="radio" name={{option}}
+                                <input type="radio" name="temperature" value={{option}}
                                        {% if option.selected %}
                                        checked
                                        {%endif%}
