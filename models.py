@@ -1,5 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 
+from preferences import DefaultPreferences
+
 db = SQLAlchemy()
 
 # For an explanation of the models and relationships defined here, see
@@ -32,7 +34,7 @@ class User(db.Model):
 
     # 1 to 1 relationship (each user has exactly one location & preferences)
     location_id = db.Column(db.Integer, db.ForeignKey("location.id"), nullable=False)
-    preferences_id = db.Column(db.Integer, db.ForeignKey("preferences.id"), nullable=True)
+    preferences = db.relationship('Preferences', backref='user', lazy=True, uselist=False)
 
     def __repr__(self):
         return f"<User {self.email}>"
@@ -48,16 +50,16 @@ class User(db.Model):
 
 class Preferences(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    day_start = db.Column(db.Integer, default=7)
-    day_end = db.Column(db.Integer, default=19)
-    temperature = db.Column(db.String(50), default='neutral')
+    day_start = db.Column(db.Integer, default=DefaultPreferences.day_start)
+    day_end = db.Column(db.Integer, default=DefaultPreferences.day_end)
+    temperature = db.Column(db.String(50), default=DefaultPreferences.temperature)
 
     # 1 to 1 relationship (each user has exactly one preference row)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
     # Many (preferences) to many (activities) relationships
     activities = db.relationship(
-        "Activity", secondary=user_interests, backref="users", lazy=True
+        "Activity", secondary=user_interests, backref="activities", lazy=True,
     )
 
 
