@@ -55,6 +55,8 @@ def add_new_user_to_db_with_default_preferences(email, location):
     models.db.session.add(prefs)
     models.db.session.commit()
 
+    return user
+
 
 def register_new_user(email: str, place: str):
     print(f"Received new user signup for {email} and {place}")
@@ -62,7 +64,7 @@ def register_new_user(email: str, place: str):
     duplicate_user = False
     user = models.User.query.filter_by(email=email).first()
     if user is None:
-        user = add_user(email, location)
+        user = add_new_user_to_db_with_default_preferences(email, location)
     else:
         duplicate_user = True
 
