@@ -9,6 +9,19 @@ db = SQLAlchemy()
 # In the future it might make sense to add a Windows class which simply links together location_ids with specific
 # forecast IDs.
 
+user_interests = db.Table(
+    "user_interests",
+    db.Column(
+        "activity_name",
+        db.String(1000),
+        db.ForeignKey("activity.name"),
+        primary_key=True,
+    ),
+    db.Column(
+        "user_id", db.Integer, db.ForeignKey("user.id"), primary_key=True
+    ),
+)
+
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -32,6 +45,21 @@ class User(db.Model):
                 'place': self.location.place}
 
 
+class Preferences(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    day_start = db.Column(db.Integer, default=7)
+    day_end = db.Column(db.Integer, default=19)
+    temperature = db.Column(db.String(50), default='neutral')
+
+    # 1 to 1 relationship (each user has exactly one preference row)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+
+    # Many (preferences) to many (activities) relationships
+    activities = db.relationship(
+        "Activity", secondary=user_interests, backref="users", lazy=True
+    )
+
+
 class Location(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     place = db.Column(db.String(100), nullable=False, unique=True)
@@ -45,6 +73,13 @@ class Location(db.Model):
 
     def __repr__(self):
         return f"<Location {self.place}>"
+
+
+class Activity(db.Model):
+    name = db.Column(db.String(1000), nullable=False, primary_key=True)
+
+    def __repr__(self):
+        return f"<Activity {self.name}>"
 
 
 class Forecast(db.Model):

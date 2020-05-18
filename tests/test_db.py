@@ -84,7 +84,7 @@ class TestLocations:
         assert isinstance(location.users, list)
 
 
-class TestForecasst:
+class TestForecasts:
     location = test_locations[0]
 
     def test_add_new_forecast(self, test_db):
@@ -112,3 +112,22 @@ class TestForecasst:
 
         location = actions.get_location_by_place(place=self.location.place)
         actions.add_tomorrows_forecast_to_db(location)
+
+
+class TestPreferences:
+
+    def test_new_user_has_default_preferences_assigned(self):
+        pass
+
+    def test_update_day_start(self):
+        pass
+
+    def test_update_day_end(self):
+        pass
+
+    def test_update_temperature(self):
+        pass
+
+    def test_update_activities(self):
+        pass
+
