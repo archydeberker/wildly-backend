@@ -1,3 +1,5 @@
+from dateutil import parser
+
 HOURS = []
 [[HOURS.append(str(hour) + period) for hour in range(1, 13)] for period in ['AM', 'PM']]
 
@@ -22,3 +24,7 @@ class DefaultPreferences:
                         'Other',
                         ]
     activities = []
+
+
+def parse_time_to_int(time_string):
+    return parser.parse(time_string).hour
