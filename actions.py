@@ -9,6 +9,7 @@ import models
 import weather
 import geo
 import auth
+import preferences
 
 from flask_mail import Mail
 
@@ -44,6 +45,15 @@ def add_tomorrows_forecast_to_db(location: models.Location):
 
 def update_preferences(form):
     print(form.data)
+
+
+def add_new_user_to_db_with_default_preferences(email, location):
+    user = add_user(email, location)
+    prefs = preferences.create_default_preference_row()
+    prefs.user_id = user.id
+
+    models.db.session.add(prefs)
+    models.db.session.commit()
 
 
 def register_new_user(email: str, place: str):
@@ -113,8 +123,23 @@ def add_user(email: str, location: models.Location):
     return user_row
 
 
-def add_or_return_user(email: str, location: models.Location = None):
+def add_activity(activity_name: str):
+    activity_row = models.Activity(name=activity_name)
+    models.db.session.add(activity_row)
+    models.db.session.commit()
 
+    return activity_row
+
+
+def add_or_return_activity(activity_name: str):
+    activity_row = models.Activity.query.filter_by(name=activity_name).first()
+    if activity_row is None:
+       activity_row = add_activity(activity_name)
+
+    return activity_row
+
+
+def add_or_return_user(email: str, location: models.Location = None):
     user_row = models.User.query.filter_by(email=email).first()
     if user_row is None:
         if location is not None:

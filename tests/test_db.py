@@ -117,6 +117,9 @@ class TestForecasts:
 
 
 class TestPreferences:
+    location = test_locations[0]
+    new_user_email = "new@gmail.com"
+    activity = "rowing"
 
     def test_create_preferences_row_with_default_values(self):
         preference_row = preferences.create_default_preference_row()
@@ -159,17 +162,92 @@ class TestPreferences:
         assert user.preferences.day_end == DefaultPreferences.day_end
 
     def test_new_user_has_default_preferences_assigned(self):
-        assert False
 
-    def test_update_day_start(self):
-        assert False
+        # Add a new user with default preferences
+        location = actions.get_location_by_place(self.location.place)
+        _ = actions.add_new_user_to_db_with_default_preferences(self.new_user_email, location)
 
-    def test_update_day_end(self):
-        assert False
+        # Check that when retrieved, those preferences are correct
+        user = actions.get_user(self.new_user_email)
 
-    def test_update_temperature(self):
-        assert False
+        assert user.preferences is not None
+        assert user.preferences.temperature == DefaultPreferences.temperature
+        assert user.preferences.day_start == DefaultPreferences.day_start
+        assert user.preferences.day_end == DefaultPreferences.day_end
 
-    def test_update_activities(self):
-        assert False
+    def test_updating_of_simple_preferences(self):
+        # Get preferences for our test user
+        user_id = actions.get_user(self.new_user_email).id
+        prefs = models.Preferences.query.filter_by(user_id=user_id).first()
+        old_day_start, old_day_end, old_temperature = prefs.day_start, prefs.day_end, prefs.temperature
+        prefs.day_start = 6
+        prefs.day_end = 22
+        prefs.temperature = 'hot'
 
+        db.session.add(prefs)
+        db.session.commit()
+        new_preferences = models.Preferences.query.filter_by(user_id=user_id).first()
+
+        assert new_preferences.day_start != old_day_start
+        assert new_preferences.day_end != old_day_end
+        assert new_preferences.temperature != old_temperature
+
+
+class TestActivities:
+    new_user_email = "new@gmail.com"
+    activity = "rowing"
+    activity2 = "basketball"
+
+    def test_add_new_activity_to_table(self):
+        activity_row = actions.add_activity(self.activity)
+
+        all_activities = models.Activity.query.all()
+
+        assert activity_row in all_activities
+
+    def test_add_first_activity_to_user_preferences(self):
+        activity_row = actions.add_or_return_activity(self.activity)
+
+        # Get preferences for our test user
+        user_id = actions.get_user(self.new_user_email).id
+        prefs = models.Preferences.query.filter_by(user_id=user_id).first()
+
+        prefs.activities.append(activity_row)
+
+        db.session.add(prefs)
+        db.session.commit()
+
+        prefs = models.Preferences.query.filter_by(user_id=user_id).first()
+
+        assert self.activity in [activity.name for activity in prefs.activities]
+
+    def test_append_activity_to_user_preferences(self):
+        user = actions.get_user(self.new_user_email)
+        new_activity = actions.add_or_return_activity(self.activity2)
+
+        user.preferences.activities.append(new_activity)
+
+        db.session.add(user)
+        db.session.commit()
+
+        user = actions.get_user(self.new_user_email)
+
+        assert len(user.preferences.activities) is 2
+
+    def test_remove_activity_from_user_preferences(self):
+
+        user = actions.get_user(self.new_user_email)
+        activity = actions.add_or_return_activity(self.activity)
+
+        assert len(user.preferences.activities) == 2
+
+        user.preferences.activities.pop(user.preferences.activities.index(activity))
+
+        assert len(user.preferences.activities) == 1
+
+        db.session.add(user)
+        db.session.commit()
+
+        user = actions.get_user(self.new_user_email)
+
+        assert len(user.preferences.activities) is 1

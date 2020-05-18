@@ -79,7 +79,7 @@ class Location(db.Model):
 
 
 class Activity(db.Model):
-    name = db.Column(db.String(1000), nullable=False, primary_key=True)
+    name = db.Column(db.String(1000), nullable=False, primary_key=True, unique=True)
 
     def __repr__(self):
         return f"<Activity {self.name}>"
