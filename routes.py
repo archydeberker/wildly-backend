@@ -48,9 +48,14 @@ def registered():
     return homepage()
 
 
-@api.route("/confirmed", methods=['GET', 'POST'])
-def confirmed():
+@api.route("/confirmed/<token>", methods=['GET', 'POST'])
+def confirmed(token):
+    email = auth.decode_token_to_email(token)
+    user = actions.get_user(email)
     form = PreferencesForm()
+
+    # In this step we will setup the form to display current preferences
+    form = actions.load_user_preferences(form, user)
     if request.method == 'POST':
         try:
             form.validate()
