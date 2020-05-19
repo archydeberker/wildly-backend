@@ -26,6 +26,7 @@ TEMPERATURE_WEIGHTINGS = {'hot': 1 / 20,
                           'neutral': 0,
                           'cool': -1 / 10}
 
+
 S3_ACCESS_KEY = os.getenv('AWS_ACCESS_KEY_ID_WINE')
 S3_SECRET_KEY = os.getenv('AWS_SECRET_ACCESS_KEY_WINE')
 S3_BUCKET_NAME = 'weather-window'
