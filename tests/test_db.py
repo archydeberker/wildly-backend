@@ -242,7 +242,7 @@ class TestActivities:
 
         user = actions.get_user(self.new_user_email)
 
-        assert len(user.preferences.activities) is 2
+        assert len(user.preferences.activities) == 2
 
     def test_remove_activity_from_user_preferences(self):
 
@@ -260,4 +260,4 @@ class TestActivities:
 
         user = actions.get_user(self.new_user_email)
 
-        assert len(user.preferences.activities) is 1
+        assert len(user.preferences.activities) == 1
