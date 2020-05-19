@@ -3,6 +3,7 @@ import models
 import weather
 import cal
 import geo
+import constants
 from actions import filter_users_who_already_have_invites_for_today
 from app_factory import create_app
 from cal import get_calendar_event
@@ -11,7 +12,8 @@ from scripts import get_credentials_from_s3
 
 def main():
     calendar = cal.Calendar()
-    finder = weather.WeatherWindowFinder()
+    finder = weather.WeatherWindowFinder(preferences=weather.Preferences(temperature_weighting=constants.TEMPERATURE_WEIGHTINGS,
+                                                                         weightings=constants.DEFAULT_WEIGHTINGS))
 
     # Get all the locations in the database
     for location in models.Location.query.all():

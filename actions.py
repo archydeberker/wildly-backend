@@ -1,18 +1,20 @@
 import datetime
-from sqlite3 import IntegrityError
 from typing import List
 
 import pandas as pd
+from flask import url_for, render_template
 
 import cal
 import models
 import weather
 import geo
 import auth
+import preferences
 
 from flask_mail import Mail
 
-from auth import compose_verification_email
+from auth import generate_confirmation_token
+from preferences import DefaultPreferences
 
 mail = Mail()
 
@@ -20,7 +22,7 @@ mail = Mail()
 def get_forecast_for_tomorrow_from_db(location: models.Location, to_pandas=True):
     today = datetime.datetime.now()
     forecasts = models.Forecast.query.filter(models.Forecast.weather_timestamp > today,
-                                            models.Forecast.location_id == location.id)
+                                             models.Forecast.location_id == location.id)
 
     if to_pandas:
         output = pd.read_sql(forecasts.statement, forecasts.session.bind)
@@ -42,13 +44,40 @@ def add_tomorrows_forecast_to_db(location: models.Location):
     models.db.session.commit()
 
 
+def update_preferences_for_user_from_form(user_email: str, form):
+    #TODO lots of unecessary retrieval of user row from emails here, remove
+    user = get_user(user_email)
+    prefs = add_or_return_user_preferences(user_email)
+
+    prefs.day_start = form.day_start.data
+    prefs.day_end = form.day_end.data
+    prefs.temperature = form.temperature.data
+    prefs.activities = [add_or_return_activity(activity) for activity in form.activities.data]
+
+    models.db.session.add(user)
+    models.db.session.commit()
+
+    return user
+
+
+def add_new_user_to_db_with_default_preferences(email, location):
+    user = add_or_return_user(email, location)
+    prefs = create_default_preference_row()
+    prefs.user_id = user.id
+
+    models.db.session.add(prefs)
+    models.db.session.commit()
+
+    return user
+
+
 def register_new_user(email: str, place: str):
     print(f"Received new user signup for {email} and {place}")
     location = add_or_return_location(place)
     duplicate_user = False
     user = models.User.query.filter_by(email=email).first()
     if user is None:
-        user = add_user(email, location)
+        user = add_new_user_to_db_with_default_preferences(email, location)
     else:
         duplicate_user = True
 
@@ -63,8 +92,17 @@ def register_new_user(email: str, place: str):
 def send_unsubscribe_email(email: str):
     user = get_user(email)
     if user:
-        html = auth.compose_unsubscribe_email(email)
+        html = compose_unsubscribe_email(email)
         auth.send_email(email, 'Unsubscribe from Weather Window', html, mail)
+    else:
+        raise ValueError
+
+
+def send_update_preferences_email(email: str):
+    user = get_user(email)
+    if user:
+        html = compose_update_preferences_email(email)
+        auth.send_email(email, 'Update preferences for Weather Window', html, mail)
     else:
         raise ValueError
 
@@ -75,8 +113,20 @@ def retrieve_location_for_user(user: dict):
     return models.Location.query.filter_by(id=user_row.location.id).first()
 
 
-def add_or_return_location(place: str):
+def add_or_return_user_preferences(user_email: str):
+    user_row = get_user(user_email)
+    prefs = user_row.preferences
+    if prefs is None:
+        prefs = create_default_preference_row()
+        prefs.user_id = user_row.id
 
+    models.db.session.add(prefs)
+    models.db.session.commit()
+
+    return prefs
+
+
+def add_or_return_location(place: str):
     location_row = get_location_by_place(place)
     if location_row is None:
         location = dict(place=place)
@@ -109,12 +159,27 @@ def add_user(email: str, location: models.Location):
     return user_row
 
 
-def add_or_return_user(email: str, location: models.Location = None):
+def add_activity(activity_name: str):
+    activity_row = models.Activity(name=activity_name)
+    models.db.session.add(activity_row)
+    models.db.session.commit()
 
+    return activity_row
+
+
+def add_or_return_activity(activity_name: str):
+    activity_row = models.Activity.query.filter_by(name=activity_name).first()
+    if activity_row is None:
+        activity_row = add_activity(activity_name)
+
+    return activity_row
+
+
+def add_or_return_user(email: str, location: models.Location = None):
     user_row = models.User.query.filter_by(email=email).first()
     if user_row is None:
         if location is not None:
-           add_user(email, location)
+            user_row = add_user(email, location)
         else:
             raise ValueError('User not found and no location specified')
 
@@ -178,3 +243,32 @@ def needs_invite_for_tomorrow(user: models.User, today):
     if user.most_recent_invite.date() == today:
         return False
     return True
+
+
+def compose_verification_email(email: str):
+    token = generate_confirmation_token(email)
+    confirm_url = url_for('api.confirm_email', token=token, _external=True)
+    unsubscribe_url = url_for('api.unsubscribe', token=token, _external=True)
+    html = render_template('emails/activate.html', confirm_url=confirm_url, unsub_url=unsubscribe_url)
+    return html
+
+
+def compose_unsubscribe_email(email: str):
+    token = generate_confirmation_token(email)
+    unsubscribe_url = url_for('api.unsubscribe', token=token, _external=True)
+    html = render_template('emails/unsubscribe.html', unsub_url=unsubscribe_url)
+    return html
+
+
+def compose_update_preferences_email(email: str):
+    token = generate_confirmation_token(email)
+    update_url = url_for('api.preferences', token=token, _external=True)
+    html = render_template('emails/preferences.html', update_url=update_url)
+    return html
+
+
+def create_default_preference_row(preferences=DefaultPreferences):
+    return models.Preferences(day_start=preferences.day_start,
+                              day_end=preferences.day_end,
+                              temperature=preferences.temperature,
+                              activities=preferences.activities)

@@ -18,7 +18,7 @@ def setup_test_app():
     db.create_all()
 
     with app.test_client() as client:
-        yield client, db
+        yield client, db, app
 
     print('Removing Test DB')
     try:
@@ -36,18 +36,25 @@ def location_dict():
     yield loc_dict
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def test_db(setup_test_app):
-    _, db = setup_test_app
+    _, db, _ = setup_test_app
 
     yield db
 
 
 @pytest.fixture(scope="session")
 def test_client(setup_test_app):
-    client, _ = setup_test_app
+    client, _, _ = setup_test_app
 
     yield client
+
+
+@pytest.fixture(scope="session")
+def test_app(setup_test_app):
+    _, _, app = setup_test_app
+
+    yield app
 
 
 @pytest.fixture(scope='session')

@@ -1,18 +1,19 @@
 import datetime
 import re
+from dataclasses import dataclass
 
 import pandas as pd
 import requests
 
 import constants
 from constants import DARKSKY_API_KEY
+from preferences import DefaultPreferences
 
 camel_case_pattern = re.compile(r'(?<!^)(?=[A-Z])')
 name_mapper = lambda x: camel_case_pattern.sub('_', x).lower()
 
 
 class DarkSky:
-
     columns = [
         "weather_timestamp",
         "recorded_timestamp",
@@ -52,7 +53,6 @@ class DarkSky:
 
     @staticmethod
     def _filter_for_tomorrow(df: pd.DataFrame):
-
         today = datetime.datetime.now().date()
         df['weather_date'] = df['weather_timestamp'].apply(lambda x: x.date())
 
@@ -60,7 +60,7 @@ class DarkSky:
         df.drop('weather_date', axis=1, inplace=True)
         return df
 
-    #TODO: refactor this to avoid pandas at all, will be faster
+    # TODO: refactor this to avoid pandas at all, will be faster
     def get_forecast_tomorrow(self, longitude: str, latitude: str):
         df = self.df_template()
         r = requests.get(
@@ -77,15 +77,25 @@ class DarkSky:
         return df
 
 
+@dataclass
+class Preferences:
+    temperature_weighting: dict
+    weightings: dict
+    day_start: int = DefaultPreferences.day_start
+    day_end: int = DefaultPreferences.day_end
+    temperature: str = DefaultPreferences.temperature
+
+    def __post_init__(self):
+        self.weightings['apparent_temperature'] = self.temperature_weighting[self.temperature]
+
+
 class WeatherWindowFinder:
     def __init__(self,
-                 start_hour: int = 7,
-                 end_hour: int = 19,
-                 weightings: dict = constants.DEFAULT_WEIGHTINGS):
+                 preferences: Preferences):
 
-        self.weightings = weightings
-        self.possible_window_start = start_hour
-        self.possible_window_end = end_hour
+        self.weightings = preferences.weightings
+        self.possible_window_start = preferences.day_start
+        self.possible_window_end = preferences.day_end
 
     def filter_for_latest_forecasts(self, df: pd.DataFrame):
         latest_forecast = df['recorded_timestamp'].max()
@@ -94,15 +104,14 @@ class WeatherWindowFinder:
     def filter_for_working_day(self, df: pd.DataFrame):
         df['hours'] = df['weather_timestamp'].apply(lambda x: x.hour)
         return df.loc[(df['hours'] > self.possible_window_start) &
-                    (df['hours'] < self.possible_window_end)]
+                      (df['hours'] < self.possible_window_end)]
 
     def get_weather_window_for_forecast(self, df: pd.DataFrame):
-
         df = self.filter_for_latest_forecasts(df)
         df = self.filter_for_working_day(df)
 
         for columns_to_score, weight in self.weightings.items():
-            df[columns_to_score + '_score'] = df[columns_to_score]*weight
+            df[columns_to_score + '_score'] = df[columns_to_score] * weight
 
         df['total_score'] = df.filter(like='_score').sum(axis=1)
 
