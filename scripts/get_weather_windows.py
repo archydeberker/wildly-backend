@@ -10,11 +10,13 @@ from cal import get_calendar_event
 from scripts import get_credentials_from_s3
 
 
-def main():
+def main(dry_run=False):
+    if dry_run:
+        print('DRY RUN MODE')
     calendar = cal.Calendar()
     finder = weather.WeatherWindowFinder(preferences=weather.Preferences(temperature_weighting=constants.TEMPERATURE_WEIGHTINGS,
                                                                          weightings=constants.DEFAULT_WEIGHTINGS))
-
+    eligible_users = []
     # Get all the locations in the database
     for location in models.Location.query.all():
         print(f'Getting users for {location}')
@@ -38,9 +40,15 @@ def main():
         # Generate the calendar invite
         timezone = geo.get_timezone_for_lat_lon(location.latitude, location.longitude)
 
-        event = get_calendar_event(location, window, attendees=[u.email for u in users], timezone=timezone)
-        calendar.create_event(event)
-        actions.update_most_recent_invite(users)
+        if dry_run:
+            eligible_users.append(f"Would send forecast for {window.weather_timestamp} to {users}")
+        else:
+            event = get_calendar_event(location, window, attendees=[u.email for u in users], timezone=timezone)
+            calendar.create_event(event)
+            actions.update_most_recent_invite(users)
+            eligible_users.append(f"Sent forecast for {window.weather_timestamp} to {users}")
+
+    print('\n'.join(eligible_users))
 
 
 if __name__ == '__main__':
@@ -48,4 +56,4 @@ if __name__ == '__main__':
     app = create_app()
     app.app_context().push()
 
-    main()
+    main(dry_run=True)

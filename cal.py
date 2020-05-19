@@ -114,3 +114,8 @@ def get_calendar_event(location: models.Location, window: pd.Series, attendees: 
                  end=window.weather_timestamp + datetime.timedelta(hours=1),
                  attendees=attendees,
                  timezone=timezone)
+
+
+if __name__ == '__main__':
+
+    cal = Calendar()
