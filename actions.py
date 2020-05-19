@@ -14,6 +14,7 @@ import preferences
 from flask_mail import Mail
 
 from auth import generate_confirmation_token
+from preferences import DefaultPreferences
 
 mail = Mail()
 
@@ -61,7 +62,7 @@ def update_preferences_for_user_from_form(user_email: str, form):
 
 def add_new_user_to_db_with_default_preferences(email, location):
     user = add_or_return_user(email, location)
-    prefs = preferences.create_default_preference_row()
+    prefs = create_default_preference_row()
     prefs.user_id = user.id
 
     models.db.session.add(prefs)
@@ -116,7 +117,7 @@ def add_or_return_user_preferences(user_email: str):
     user_row = get_user(user_email)
     prefs = user_row.preferences
     if prefs is None:
-        prefs = preferences.create_default_preference_row()
+        prefs = create_default_preference_row()
         prefs.user_id = user_row.id
 
     models.db.session.add(prefs)
@@ -264,3 +265,10 @@ def compose_update_preferences_email(email: str):
     update_url = url_for('api.preferences', token=token, _external=True)
     html = render_template('emails/preferences.html', update_url=update_url)
     return html
+
+
+def create_default_preference_row(preferences=DefaultPreferences):
+    return models.Preferences(day_start=preferences.day_start,
+                              day_end=preferences.day_end,
+                              temperature=preferences.temperature,
+                              activities=preferences.activities)

@@ -122,7 +122,7 @@ class TestPreferences:
     activity = "rowing"
 
     def test_create_preferences_row_with_default_values(self):
-        preference_row = preferences.create_default_preference_row()
+        preference_row = actions.create_default_preference_row()
         assert preference_row.day_start == DefaultPreferences.day_start
         assert preference_row.day_end == DefaultPreferences.day_end
         assert preference_row.temperature == DefaultPreferences.temperature
@@ -130,7 +130,7 @@ class TestPreferences:
 
     def test_preferences_cannot_be_created_without_a_user(self):
 
-        preference_row = preferences.create_default_preference_row()
+        preference_row = actions.create_default_preference_row()
 
         models.db.session.add(preference_row)
         with pytest.raises(IntegrityError):
@@ -148,7 +148,7 @@ class TestPreferences:
         assert user_preferences is None
 
         # Now create some preferences and associate with that user
-        preference_row = preferences.create_default_preference_row()
+        preference_row = actions.create_default_preference_row()
         preference_row.user_id = user.id
 
         db.session.add(preference_row)

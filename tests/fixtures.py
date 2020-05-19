@@ -61,6 +61,7 @@ def test_app(setup_test_app):
 def example_forecast():
     pass
 
+
 @dataclass
 class MockLocation:
     place: str
