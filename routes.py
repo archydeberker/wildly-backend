@@ -97,8 +97,12 @@ def confirm_email(token):
         actions.set_email_verified(user_row=user)
         # TODO: we can do this async, move it to a cron job
 
-        actions.send_tomorrow_window_to_user(user=user)
-        flash('Email confirmed, thanks! Check your calendar, you should have an invite for tomorrow!', 'success')
+        try:
+            actions.send_tomorrow_window_to_user(user=user)
+            flash('Email confirmed, thanks! Check your calendar, you should have an invite for tomorrow!', 'success')
+        except Exception as e:
+            print(f"New user invite failed - {e}")
+            flash('Email confirmed, thanks! We will send you a calendar invite for tomorrow shortly!', 'success')
 
     return redirect(url_for('api.confirmed'))
 
