@@ -61,8 +61,7 @@ def preferences(token, header="Update your preferences", subheader="Customize yo
         except ValidationError as error:
             flash(error, category='error')
 
-    user = actions.get_user(email)
-    form.initialize_from_db(user.preferences)
+    form.initialize_from_db(actions.add_or_return_user_preferences(email))
     return render_template('confirm.html', title='Weather Window: Preferences', header=header, subheader=subheader, form=form)
 
 
