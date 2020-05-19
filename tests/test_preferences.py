@@ -29,7 +29,8 @@ def user_with_non_default_preferences(test_db):
     prefs.day_start = 9
     prefs.day_end = 16
     prefs.temperature = 'hot'
-    prefs.activities = [models.Activity(name='rowing'), models.Activity(name='swimming')]
+    prefs.activities = [actions.add_or_return_activity('rowing'),
+                        actions.add_or_return_activity('swimming')]
 
     models.db.session.add(user)
     models.db.session.commit()
@@ -59,5 +60,6 @@ class TestPreferencesForm:
         assert test_form.activities.default != DefaultPreferences.activities
         assert test_form.temperature.default != DefaultPreferences.temperature
 
+    @pytest.mark.skip('Incomplete implementation')
     def test_update_preferences_from_form(self):
         pass

@@ -47,6 +47,6 @@ class TestWeatherWindows:
 
         assert window['weather_timestamp'].hour == expected
 
-
+    @pytest.mark.skip('Incomplete implementation')
     def test_weather_window_never_exceeds_user_preference(self):
         assert False
