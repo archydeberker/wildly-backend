@@ -68,7 +68,7 @@ class Calendar:
 
     def _authenticate(self, scopes, host):
         creds = None
-        # The file token.pickle stores the user's access and refresh tokens, and is
+        # The file token_archy@weatherwindowapp.pickle stores the user's access and refresh tokens, and is
         # created automatically when the authorization flow completes for the first
         # time.
         if self.token_path.exists():

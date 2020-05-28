@@ -1,3 +1,5 @@
+import time
+
 import actions
 import models
 import weather
@@ -9,6 +11,8 @@ from app_factory import create_app
 from cal import get_calendar_event
 from scripts import get_credentials_from_s3
 
+DELAY_IN_S = 1
+
 
 def main(dry_run=False):
     if dry_run:
@@ -18,7 +22,7 @@ def main(dry_run=False):
                                                                          weightings=constants.DEFAULT_WEIGHTINGS))
     eligible_users = []
     # Get all the locations in the database
-    for location in models.Location.query.all():
+    for location in reversed(models.Location.query.all()):
         print(f'Getting users for {location}')
 
         # Users who we will alert
@@ -41,19 +45,24 @@ def main(dry_run=False):
         timezone = geo.get_timezone_for_lat_lon(location.latitude, location.longitude)
 
         if dry_run:
-            eligible_users.append(f"Would send forecast for {window.weather_timestamp} to {users}")
+            for u in users:
+                eligible_users.append(f"Would send forecast for {window.weather_timestamp} to {u}")
         else:
-            event = get_calendar_event(location, window, attendees=[u.email for u in users], timezone=timezone)
+            event = get_calendar_event(location, window, attendees=[user.email for user in users], timezone=timezone)
             calendar.create_event(event)
             actions.update_most_recent_invite(users)
             eligible_users.append(f"Sent forecast for {window.weather_timestamp} to {users}")
+            time.sleep(DELAY_IN_S)
 
     print('\n'.join(eligible_users))
+    if dry_run:
+        print(f'{len(eligible_users)} need invites')
+    else:
+        print(f'{len(eligible_users)} received invites')
 
 
 if __name__ == '__main__':
     get_credentials_from_s3.main()
     app = create_app()
     app.app_context().push()
-
     main(dry_run=True)

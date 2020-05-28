@@ -5,8 +5,8 @@ from app_factory import create_app
 
 
 def main(dry_run=True):
-    two_days_ago = datetime.datetime.now() + datetime.timedelta(hours=-48)
-    old_forecasts = models.Forecast.query.filter(models.Forecast.weather_timestamp < two_days_ago)
+    one_day_ago = datetime.datetime.now() + datetime.timedelta(hours=-24)
+    old_forecasts = models.Forecast.query.filter(models.Forecast.weather_timestamp < one_day_ago)
 
     if len(old_forecasts.all()) > 0:
         print(f"Delete {len(old_forecasts.all())} records, oldest being {old_forecasts.order_by(models.Forecast.weather_timestamp).first().weather_timestamp} and "
