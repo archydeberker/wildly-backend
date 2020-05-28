@@ -65,4 +65,4 @@ if __name__ == '__main__':
     get_credentials_from_s3.main()
     app = create_app()
     app.app_context().push()
-    main(dry_run=True)
+    main(dry_run=False)
