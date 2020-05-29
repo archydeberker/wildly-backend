@@ -108,8 +108,15 @@ def add_locations_and_activities_for_user(user, locations, activities):
     user_row = add_or_return_user(user)
     print(locations)
     print(activities)
-    user_row.locations += [get_location(location) for location in locations]
-    user_row.activities += [add_or_return_activity(activity['value']) for activity in activities]
+    if isinstance(user_row.locations, list):
+        user_row.locations += [get_location(location) for location in locations]
+    else:
+        user_row.locations = [get_location(location) for location in locations]
+
+    if isinstance(user_row.activities, list):
+        user_row.activities += [add_or_return_activity(activity['value']) for activity in activities]
+    else:
+        user_row.activities = [add_or_return_activity(activity['value']) for activity in activities]
 
     print(user_row.locations)
     print(user_row.activities)
