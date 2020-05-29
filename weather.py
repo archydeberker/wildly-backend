@@ -6,6 +6,7 @@ import pandas as pd
 import requests
 
 import constants
+import models
 from constants import DARKSKY_API_KEY
 from preferences import DefaultPreferences
 
@@ -116,6 +117,14 @@ class WeatherWindowFinder:
         df['total_score'] = df.filter(like='_score').sum(axis=1)
 
         return df.loc[df['total_score'].idxmax()]
+
+
+def convert_db_preferences_to_weather_preferences(preferences: models.Preferences):
+    return Preferences(temperature_weighting=constants.TEMPERATURE_WEIGHTINGS,
+                       weightings=constants.DEFAULT_WEIGHTINGS,
+                       day_start=preferences.day_start,
+                       day_end=preferences.day_end,
+                       temperature=preferences.temperature)
 
 
 if __name__ == "__main__":
