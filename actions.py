@@ -14,7 +14,7 @@ def add_home_location(user, location):
     """Create the `location` in the location table and associate it with a `user` """
     user_row = add_or_return_user(user)
     home_location = add_or_return_location(location)
-    user_row.home_location = home_location
+    user_row.home_location = home_location.id
 
     models.db.session.add(user_row)
     models.db.session.commit()
