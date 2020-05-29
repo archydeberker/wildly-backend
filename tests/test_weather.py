@@ -3,6 +3,7 @@ import pytest
 import constants
 import weather
 import pandas as pd
+from tests.fixtures import user_with_hot_preferences, test_db, setup_test_app
 from pathlib import Path
 
 test_dir = Path(__file__).parent.absolute()
@@ -50,3 +51,18 @@ class TestWeatherWindows:
     @pytest.mark.skip('Incomplete implementation')
     def test_weather_window_never_exceeds_user_preference(self):
         assert False
+
+    def test_weather_preferences_converted_from_db(self, user_with_hot_preferences, example_forecast):
+        df = example_forecast
+        non_default_preferences = weather.convert_db_preferences_to_weather_preferences(user_with_hot_preferences.preferences)
+        window_finder = weather.WeatherWindowFinder(non_default_preferences)
+        window = window_finder.get_weather_window_for_forecast(df)
+
+        default_preferences = weather.Preferences(weightings=constants.DEFAULT_WEIGHTINGS,
+                                                  temperature_weighting=constants.TEMPERATURE_WEIGHTINGS)
+
+        window_finder = weather.WeatherWindowFinder(default_preferences)
+        default_window = window_finder.get_weather_window_for_forecast(df)
+
+        assert window['weather_timestamp'].hour > default_window['weather_timestamp'].hour
+        assert window['apparent_temperature'] > default_window['apparent_temperature']

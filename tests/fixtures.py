@@ -2,9 +2,15 @@ import os
 from dataclasses import dataclass
 
 import pytest
+
+import actions
+import models
 from app_factory import create_app
+from forms import PreferencesForm
 from models import db
 from config import TestConfig
+
+test_email = 'test@gmail.com'
 
 
 @pytest.fixture(scope='session')
@@ -81,3 +87,28 @@ test_locations = [MockLocation(place='Redland, Bristol, UK',
                                country='Canada',
                                lat=45.5,
                                lon=-73.6)]
+
+
+@pytest.fixture(scope='module')
+def test_form(test_client, test_app):
+    with test_app.app_context(), test_app.test_request_context():
+        form = PreferencesForm()
+        yield form
+
+
+@pytest.fixture(scope='module')
+def user_with_hot_preferences(test_db):
+    user = actions.add_new_user_to_db_with_default_preferences(email=test_email,
+                                                               location=actions.add_or_return_location(test_locations[0].place))
+
+    # Retrieve existing preferences, we don't want to add an entirely new row
+    prefs = user.preferences
+    prefs.day_start = 9
+    prefs.day_end = 16
+    prefs.temperature = 'hot'
+    prefs.activities = [actions.add_or_return_activity('rowing'),
+                        actions.add_or_return_activity('swimming')]
+
+    models.db.session.add(user)
+    models.db.session.commit()
+    yield user
