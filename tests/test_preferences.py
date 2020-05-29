@@ -1,11 +1,13 @@
 import pytest
 
 from preferences import DefaultPreferences
-from tests.fixtures import test_locations
+from tests.fixtures import test_locations, test_form, test_client, setup_test_app, test_app, test_db, \
+    user_with_hot_preferences
 
 # TODO these tests are pretty feeble, but I don't know how to mock the submission of forms with different values
 
 test_location = test_locations[0]
+
 
 class TestPreferencesForm:
 

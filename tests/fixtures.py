@@ -49,7 +49,7 @@ def test_db(setup_test_app):
     yield db
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def test_client(setup_test_app):
     client, _, _ = setup_test_app
 
@@ -89,14 +89,14 @@ test_locations = [MockLocation(place='Redland, Bristol, UK',
                                lon=-73.6)]
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def test_form(test_client, test_app):
     with test_app.app_context(), test_app.test_request_context():
         form = PreferencesForm()
         yield form
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def user_with_hot_preferences(test_db):
     user = actions.add_new_user_to_db_with_default_preferences(email=test_email,
                                                                location=actions.add_or_return_location(test_locations[0].place))
