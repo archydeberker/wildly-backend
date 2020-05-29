@@ -74,7 +74,7 @@ def add_or_return_location(location):
 
 def get_location(location):
     return models.Location.query.filter_by(
-        latitude=location["latitude"], longitude=location["longitude"],
+        name=location["name"],
     ).first()
 
 
