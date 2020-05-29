@@ -102,7 +102,7 @@ def list_locations():
                      "activities": [a.name for a in l.activities]} for l in locations])
 
 
-@api.route("/api/user-locations",  methods=['POST'])
+@api.route("/api/user-locations",  methods=['GET', 'POST'])
 @cross_origin(headers=["Content-Type", "Authorization"])
 # @requires_auth
 def list_locations_for_current_user():
