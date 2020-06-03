@@ -57,7 +57,8 @@ def preferences(token, header="Update your preferences", subheader="Customize yo
         try:
             form.validate()
             actions.update_preferences_for_user_from_form(email, form=form)
-            flash(f"We've updated your preferences, thanks")
+            flash(f"We've updated your preferences, thanks. You'll see this reflected in the next "
+                  f"weather window we send you!")
         except ValidationError as error:
             flash(error, category='error')
 
