@@ -1,5 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 
+from preferences import DefaultPreferences
+
 db = SQLAlchemy()
 
 # For an explanation of the models and relationships defined here, see
@@ -9,6 +11,19 @@ db = SQLAlchemy()
 # In the future it might make sense to add a Windows class which simply links together location_ids with specific
 # forecast IDs.
 
+user_interests = db.Table(
+    "user_interests",
+    db.Column(
+        "activity_name",
+        db.String(1000),
+        db.ForeignKey("activity.name"),
+        primary_key=True,
+    ),
+    db.Column(
+        "preferences_id", db.Integer, db.ForeignKey("preferences.id"), primary_key=True
+    ),
+)
+
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -17,8 +32,9 @@ class User(db.Model):
     most_recent_invite = db.Column(db.DateTime, nullable=True)
     registered = db.Column(db.DateTime, nullable=True)
 
-    # 1 to 1 relationship (each user has exactly one location)
+    # 1 to 1 relationship (each user has exactly one location & preferences)
     location_id = db.Column(db.Integer, db.ForeignKey("location.id"), nullable=False)
+    preferences = db.relationship('Preferences', backref='user', lazy=True, uselist=False)
 
     def __repr__(self):
         return f"<User {self.email}>"
@@ -30,6 +46,21 @@ class User(db.Model):
                 'verified': self.email_verified,
                 'registered': self.reg_date,
                 'place': self.location.place}
+
+
+class Preferences(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    day_start = db.Column(db.Integer, default=DefaultPreferences.day_start)
+    day_end = db.Column(db.Integer, default=DefaultPreferences.day_end)
+    temperature = db.Column(db.String(50), default=DefaultPreferences.temperature)
+
+    # 1 to 1 relationship (each user has exactly one preference row)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+
+    # Many (preferences) to many (activities) relationships
+    activities = db.relationship(
+        "Activity", secondary=user_interests, backref="activities", lazy=True,
+    )
 
 
 class Location(db.Model):
@@ -45,6 +76,13 @@ class Location(db.Model):
 
     def __repr__(self):
         return f"<Location {self.place}>"
+
+
+class Activity(db.Model):
+    name = db.Column(db.String(1000), nullable=False, primary_key=True, unique=True)
+
+    def __repr__(self):
+        return f"<Activity {self.name}>"
 
 
 class Forecast(db.Model):

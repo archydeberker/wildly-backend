@@ -43,6 +43,7 @@ def test_event():
     yield e
 
 
+@pytest.mark.skip('Exceeding calendar API limits!')
 class TestCalendar:
 
     def test_authentication(self, calendar_client):

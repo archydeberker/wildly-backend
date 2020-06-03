@@ -1,11 +1,10 @@
 from smtplib import SMTPRecipientsRefused
-from sqlite3 import IntegrityError
 
-import flask
-from flask import Blueprint, jsonify, request, render_template, flash, redirect, url_for
+from flask import Blueprint, request, render_template, flash, redirect, url_for
 from itsdangerous import BadSignature
+from wtforms import ValidationError
 
-from forms import RegisterForm, UnsubscribeForm
+from forms import RegisterForm, UnsubscribeForm, PreferencesForm, UpdateForm
 import actions
 import constants
 import auth
@@ -49,9 +48,21 @@ def registered():
     return homepage()
 
 
-@api.route("/confirmed", methods=['GET', 'POST'])
-def confirmed():
-    return homepage()
+@api.route("/preferences/<token>", methods=['GET', 'POST'])
+def preferences(token, header="Update your preferences", subheader="Customize your weather window"):
+    email = auth.decode_token_to_email(token)
+    form = PreferencesForm()
+
+    if request.method == 'POST':
+        try:
+            form.validate()
+            actions.update_preferences_for_user_from_form(email, form=form)
+            flash(f"We've updated your preferences, thanks")
+        except ValidationError as error:
+            flash(error, category='error')
+
+    form.initialize_from_db(actions.add_or_return_user_preferences(email))
+    return render_template('confirm.html', title='Weather Window: Preferences', header=header, subheader=subheader, form=form)
 
 
 @api.route("/unsubscribe", methods=["GET", "POST"])
@@ -68,14 +79,22 @@ def unsubscribe_page():
     return render_template('unsubscribe.html', form=form)
 
 
+@api.route("/changepreferences", methods=["GET", "POST"])
+def preferences_page():
+    form = UpdateForm()
+    if form.validate_on_submit():
+        try:
+            email = form.email.data
+            actions.send_update_preferences_email(email)
+            flash(f"Update preferences email sent to {email}")
+        except ValueError:
+            flash(f"We couldn't find that user, have you already unsubscribed?")
+
+    return render_template('change_preferences.html', form=form)
+
+
 @api.route("/")
 def index():
-    return render_template('base.html')
-
-
-@api.route("/flash")
-def test_flash():
-    flash('This is a test flash')
     return render_template('base.html')
 
 
@@ -89,6 +108,7 @@ def confirm_email(token):
     email = auth.decode_token_to_email(token)
     if email is None:
         flash('This confirmation link is invalid or has expired', 'danger')
+        redirect(url_for('api.index'))
     else:
         print(f"Email confirmed for user {email}")
         user = actions.get_user(email)
@@ -104,7 +124,10 @@ def confirm_email(token):
             print(f"New user invite failed - {e}")
             flash('Email confirmed, thanks! We will send you a calendar invite for tomorrow shortly!', 'success')
 
-    return redirect(url_for('api.confirmed'))
+    return redirect(url_for('api.preferences',
+                            token=token,
+                            header="You're all set!",
+                            subheader="We've confirmed your email and sent you an invite for tomorrow"))
 
 
 @api.route("/unsubscribe/<token>", methods=["GET", "POST"])
