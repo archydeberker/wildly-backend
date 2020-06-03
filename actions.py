@@ -236,6 +236,8 @@ def filter_users_who_already_have_invites_for_today(users):
 
 
 def needs_invite_for_tomorrow(user: models.User, today):
+    if user.email == 'berkerboy@gmail.com':
+        return True
     if user.most_recent_invite is None:
         return True
     if user.most_recent_invite.date() == today:
