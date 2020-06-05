@@ -11,7 +11,6 @@ import auth
 
 api = Blueprint("api", __name__)
 
-
 def homepage():
     form = RegisterForm()
     if request.method == 'POST':
@@ -59,7 +58,7 @@ def preferences(token, header="Update your preferences", subheader="Customize yo
             actions.update_preferences_for_user_from_form(email, form=form)
             flash(f"We've updated your preferences, thanks. You'll see this reflected in the next "
                   f"weather window we send you!")
-            return homepage()
+            return redirect(url_for('api.index'))
         except ValidationError as error:
             flash(error, category='error')
 
