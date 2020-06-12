@@ -2,11 +2,9 @@ import time
 
 import actions
 import models
-import preferences
 import weather
 import cal
 import geo
-import constants
 from actions import filter_users_who_already_have_invites_for_today
 from app_factory import create_app
 from cal import get_calendar_event
@@ -52,6 +50,11 @@ def main(dry_run=False):
                     user_preferences = user.preferences
 
             # Create a window preferences object from db preferences
+            if user_preferences is None:
+                # If the user was registered before preferences were added, assume they have default
+                # preferences
+                user_preferences = actions.create_default_preference_row()
+
             preferences = weather.convert_db_preferences_to_weather_preferences(user_preferences)
 
             # Get the best weather for each user
@@ -61,10 +64,10 @@ def main(dry_run=False):
             if dry_run:
                 eligible_users.append(f"Would send forecast for {window.weather_timestamp} to {user}")
             else:
-                event = get_calendar_event(location, window, attendees=user, timezone=timezone)
+                event = get_calendar_event(location, window, attendees=[user.email], timezone=timezone)
                 calendar.create_event(event)
-                actions.update_most_recent_invite(users)
-                eligible_users.append(f"Sent forecast for {window.weather_timestamp} to {users}")
+                actions.update_most_recent_invite([user])
+                eligible_users.append(f"Sent forecast for {window.weather_timestamp} to {user}")
                 time.sleep(DELAY_IN_S)
 
     print('\n'.join(eligible_users))
