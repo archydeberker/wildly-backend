@@ -87,7 +87,7 @@ def preferences_page():
         try:
             email = form.email.data
             actions.send_update_preferences_email(email)
-            flash(f"Update preferences email sent to {email}")
+            flash(f"We've sent a link to edit your preferences to {email}")
         except ValueError:
             flash(f"We couldn't find that user, have you already unsubscribed?")
 
