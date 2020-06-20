@@ -69,7 +69,7 @@ def preferences(token, header="Update your preferences", subheader="Customize yo
 @api.route("/unsubscribe", methods=["GET", "POST"])
 def unsubscribe_page():
     form = UnsubscribeForm()
-    if form.validate_on_submit():
+    if request.method == 'POST':
         try:
             email = form.email.data
             actions.send_unsubscribe_email(email)
@@ -83,7 +83,7 @@ def unsubscribe_page():
 @api.route("/changepreferences", methods=["GET", "POST"])
 def preferences_page():
     form = UpdateForm()
-    if form.validate_on_submit():
+    if request.method == 'POST':
         try:
             email = form.email.data
             actions.send_update_preferences_email(email)
