@@ -24,7 +24,6 @@ def main(dry_run=False):
 
         # Users who we will alert
         users = [u for u in location.users if u.email_verified]
-
         users = filter_users_who_already_have_invites_for_today(users)
 
         print(f'Eligible users for {location} are {users}')
@@ -34,6 +33,9 @@ def main(dry_run=False):
 
         # Get weather forecast from DB for each of them, format as a dataframe
         forecasts_df = actions.get_forecast_for_tomorrow_from_db(location, to_pandas=True)
+        if len(forecasts_df) == 0:
+            actions.add_tomorrows_forecast_to_db(location)
+            forecasts_df = actions.get_forecast_for_tomorrow_from_db(location, to_pandas=True)
 
         # Generate the calendar invite
         timezone = geo.get_timezone_for_lat_lon(location.latitude, location.longitude)

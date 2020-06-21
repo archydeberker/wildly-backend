@@ -206,7 +206,8 @@ def update_most_recent_invite(users: List[models.User]):
 
 def send_tomorrow_window_to_user(user: models.User, host: str = 'localhost'):
     calendar = cal.Calendar(host=host)
-    finder = weather.WeatherWindowFinder()
+    preferences = weather.convert_db_preferences_to_weather_preferences(user.preferences)
+    finder = weather.WeatherWindowFinder(preferences=preferences)
 
     location = user.location
 

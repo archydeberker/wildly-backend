@@ -11,6 +11,7 @@ import auth
 
 api = Blueprint("api", __name__)
 
+
 def homepage():
     form = RegisterForm()
     if request.method == 'POST':
