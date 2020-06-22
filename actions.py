@@ -150,7 +150,8 @@ def delete_user(email: str):
         user = get_user(email)
         models.db.session.delete(user)
         # Delete user preferences too to solve non-null constraint
-        models.db.session.delete(user.preferences)
+        if user.preferences is not None:
+            models.db.session.delete(user.preferences)
     print(f'Deleting user {email} and associated preferences')
     models.db.session.commit()
 
