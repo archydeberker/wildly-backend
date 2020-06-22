@@ -146,9 +146,13 @@ def get_user(email: str):
 
 
 def delete_user(email: str):
-    user = get_user(email)
-    models.db.session.delete(user)
-    print(f'Deleting user {email}')
+    with models.db.session.no_autoflush:
+        user = get_user(email)
+        models.db.session.delete(user)
+        # Delete user preferences too to solve non-null constraint
+        if user.preferences is not None:
+            models.db.session.delete(user.preferences)
+    print(f'Deleting user {email} and associated preferences')
     models.db.session.commit()
 
 
@@ -203,7 +207,8 @@ def update_most_recent_invite(users: List[models.User]):
 
 def send_tomorrow_window_to_user(user: models.User, host: str = 'localhost'):
     calendar = cal.Calendar(host=host)
-    finder = weather.WeatherWindowFinder()
+    preferences = weather.convert_db_preferences_to_weather_preferences(user.preferences)
+    finder = weather.WeatherWindowFinder(preferences=preferences)
 
     location = user.location
 
